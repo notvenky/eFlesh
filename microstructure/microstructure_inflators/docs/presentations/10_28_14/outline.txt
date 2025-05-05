@@ -1,0 +1,80 @@
+Introduction
+  - Goal: print an object that matches a target deformation under a particular load.
+    Extra challenge: do this on a single material printer.
+    Examples: bird, bar (target-deformed object + force arrows)
+    
+  - Overview:
+        1) Find material properties at each point.
+          (Image: young's modulus field for bar)
+        2) Find geometry that achieves these material properties.
+          (Image: tiled pattern for bar)
+
+Material Optimization
+  - E_M(Y, nu) = int_domega ||u - u^*||^2 dA
+    Y, nu : R^N -> R
+  - Discretize material fields Y, nu: constant value per axis-aligned grid cell
+  - What we've tried
+        Gradient-based - bad convergence
+        Local/global type iteration (constrained nonlinear least squares to
+        fit stress)
+  - Results
+        Bar, bird iterates (image flipper)
+
+Homogenization
+  - How can we vary the material properties? Vary the microstructure geometry.
+    (Image of object filled with two different patterns: circles, stars)
+  - When printed with the same material, these objects have different
+    homogenized, or "effective" material properties.
+    (Image of object filled with two different solid colors)
+  - To use nice mathematical tools, restrict ourselves to periodically tiled
+    base cells.
+    (Image of base cell corresponding to circles object, and cell filled with
+     "circle solid color")
+
+  - Recall: material properties (elasticity tensor) tell us how strain maps to
+    stress.
+  - Can't spatially average the properties!
+  - General idea: for all possible average strains of the cell, compute the
+    average stress.
+
+  - Computation
+        - Impose an average constant strain and compute how the geometry
+          actually deforms
+          (Image: squashed mictrostructure geometry, const+fluctuation
+           strain-deformed geometry)
+        - Average the stress tensor
+ - By linearity we only need to solve 3 of these in 2D to get the full
+   elasticity tensor: 2 axis-aligned stretches and 1 shear (form a basis for
+   strain tensors).
+
+ - Cell problem + homogenized tensor formula
+
+Patterns
+ - We choose to explore bar-based patterns because its wide range of
+   applications in nature and architecture. (Show molecular models, bone
+   structures, and truss-based buildings)
+ - Show wire examples
+ - We "inflate" the wire to convert it into a triangular mesh for printing and
+   simulation. [cite George Hart]
+ - To ensure periodicity, we perform extra geometry processing.
+ - Each pattern can be parameterized by a few pattern parameters.  E.g.
+   translate the vertex locations and thickening.  To preserve the orthotropic
+   structure, we choose parameters that preserve the symmetry of the pattern.
+ - Printibility
+
+Optimizing Patterns
+ - We need to "invert" the homogenization procedure
+ - Find pattern that gives particular material properties
+ - Could sample the 9+ Dimensional pattern parameter space and find closest
+   tensor
+ - But space is huge, N^P sample points (N # samples per param, P # params)
+ - Ideally we can tune the elasticity tensor with an optimization:
+
+    min_p ||E - E^*||^2
+ - p controls shape of microstructure! How to optimize?
+ - Use the shape derivative
+ (Image of normal velocity perturbation of an object's boundary: v_n)
+ delta E(v_n) = E(omega) - E(omega perturbed by \epsilon * v_n)
+
+ - Amazingly, the closed form of the homogenized elasticity tensor can be
+   "shape differentiated"

@@ -1,0 +1,6 @@
+-Printability: enclosed voids and threshold?
+-Symmetry orbits?
+-Is isotropy filtering done by simulating the geometries? How is this done?
+-What is the topology enumeration stage?
+-How to generate tables with data for experiments, for example, file
+'worst_case_stress/experiments/min_autocover/tables/0746.txt'.

@@ -1,0 +1,81 @@
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath, amssymb, amsfonts, amsthm}
+\usepackage{upgreek}
+\usepackage{amsthm}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{cancel}
+\usepackage{subfigure}
+\usepackage{mathrsfs}
+\usepackage{outlines}
+\usepackage[font={sf,it}, labelfont={sf,bf}, labelsep=space, belowskip=5pt]{caption}
+\usepackage{hyperref}
+% \usepackage{minted}
+\usepackage{enumerate}
+\usepackage{titling}
+
+\usepackage{fancyhdr}
+\usepackage[title]{appendix}
+
+\DeclareMathOperator{\sgn}{sgn}
+
+%% \pagestyle{fancy}
+%% \headheight 24pt
+%% \headsep    12pt
+%% \lhead{Shape Derivatives for Functions of Homogenized Elasticity Tensors}
+%% \rhead{\today}
+%% \fancyfoot[C]{} % hide the default page number at the bottom
+%% \lfoot{}
+%% \rfoot{\thepage}
+%% \renewcommand{\headrulewidth}{0.4pt}
+%% \renewcommand\footrulewidth{0.4pt}
+\providecommand{\abs}[1]{\lvert#1\rvert}
+\providecommand{\norm}[1]{\lVert#1\rVert}
+\providecommand{\dx}{\, \mathrm{d}x}
+\providecommand{\dA}{\, \mathrm{d}A}
+% \providecommand{\vint}[2]{\int_{#1} \! #2 \, \mathrm{d}x}
+% \providecommand{\sint}[2]{\int_{\partial #1} \! #2 \, \mathrm{d}A}
+\renewcommand{\div}{\nabla \cdot}
+\providecommand{\shape}{\Omega(p)}
+\providecommand{\mesh}{\mathcal{M}}
+\providecommand{\boundary}{\partial \shape}
+\providecommand{\vint}[1]{\int_{\shape} \! #1 \, \mathrm{d}x}
+\providecommand{\sint}[1]{\int_{\boundary} \! #1 \, \mathrm{d}A}
+\providecommand{\pder}[2]{\frac{\partial #1}{\partial #2}}
+\providecommand{\tder}[2]{\frac{\mathrm{d} #1}{\mathrm{d} #2}}
+\providecommand{\evalat}[2]{\left.#1\right|_{#2}}
+\newcommand{\defeq}{\vcentcolon=}
+\newtheorem{lemma}{Lemma}
+
+\makeatletter
+\usepackage{mathtools}
+\newcases{mycases}{\quad}{%
+  \hfil$\m@th\displaystyle{##}$}{$\m@th\displaystyle{##}$\hfil}{\lbrace}{.}
+\makeatother
+
+%% + Abtin
+\usepackage{fullpage}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{paralist}
+\usepackage{prettyref}
+\newrefformat{sec}{Section~\ref{#1}}
+\newrefformat{tbl}{Table~\ref{#1}}
+\newrefformat{fig}{Fig.~\ref{#1}}
+\newrefformat{chp}{Chapter~\ref{#1}}
+\newrefformat{eqn}{Eq.~\eqref{#1}}
+\newrefformat{set}{Eq.~Set~\eqref{#1}}
+\newrefformat{alg}{Algorithm~\ref{#1}}
+\newrefformat{apx}{Appendix~\ref{#1}}
+\newcommand\pr[1]{\prettyref{#1}}
+
+\newcommand\note[1]{\textcolor{magenta}{\bf [ABT: #1]}}
+\renewcommand\vec[1]{\ensuremath{\mathbf #1}}
+\def\x{\vec{x}}
+\def\y{\vec{y}}
+\def\u{\vec{u}}
+\def\ue{\vec{u}^\e}
+\def\strain{\varepsilon}
+\def\d{\, \mathrm{d}}
+\def\R{\, \mathbb{R}}
+\DeclareMathOperator*{\argmin}{argmin}
+\newcommand\para[1]{\paragraph{#1.~}}

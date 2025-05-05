@@ -1,0 +1,30 @@
+################################################################################
+
+get_filename_component(CURRENT_DIR ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CURRENT_DIR})
+
+################################################################################
+
+micro_single_app(isosurface_cli micro::mesh_fem micro::isosurface_inflator micro::boost)
+micro_single_app(replicate micro::mesh_fem micro::isosurface_inflator micro::boost)
+micro_single_app(tile micro::mesh_fem micro::isosurface_inflator micro::boost)
+if (MICRO_WITH_OPENVDB)
+    micro_single_app(drill_holes_cli openvdb micro::mesh_fem micro::isosurface_inflator CLI11::CLI11 nlohmann_json::nlohmann_json)
+    set_target_properties(drill_holes_cli PROPERTIES CXX_STANDARD 14)
+    micro_single_app(stitch_cells_cli openvdb micro::mesh_fem micro::isosurface_inflator CLI11::CLI11 nlohmann_json::nlohmann_json)
+    set_target_properties(stitch_cells_cli PROPERTIES CXX_STANDARD 14)
+    micro_single_app(cut_cells_cli openvdb micro::mesh_fem micro::isosurface_inflator CLI11::CLI11 nlohmann_json::nlohmann_json)
+    set_target_properties(cut_cells_cli PROPERTIES CXX_STANDARD 14)
+    micro_single_app(stack_cells openvdb micro::mesh_fem micro::isosurface_inflator CLI11::CLI11 nlohmann_json::nlohmann_json)
+    set_target_properties(stack_cells PROPERTIES CXX_STANDARD 14)
+    micro_single_app(erode_cli micro::mesh_fem micro::isosurface_inflator CLI11::CLI11 nlohmann_json::nlohmann_json openvdb)
+    set_target_properties(erode_cli PROPERTIES CXX_STANDARD 14)
+    micro_single_app(remove_top micro::mesh_fem micro::isosurface_inflator CLI11::CLI11 nlohmann_json::nlohmann_json openvdb)
+    set_target_properties(remove_top PROPERTIES CXX_STANDARD 14)
+endif()
+micro_single_app(VisualizeQuantities micro::mesh_fem micro::isosurface_inflator)
+micro_single_app(VisualizeQuantities2D micro::mesh_fem micro::isosurface_inflator)
+micro_single_app(PrintabilityConstraints micro::mesh_fem micro::isosurface_inflator micro::boost)
+micro_single_app(SignedDistance_cli micro::mesh_fem micro::isosurface_inflator micro::boost)
+micro_single_app(TestWireMesh micro::mesh_fem micro::isosurface_inflator)
+# micro_single_app(TestStitchedWireMesh micro::mesh_fem micro::isosurface_inflator)

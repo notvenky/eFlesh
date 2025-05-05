@@ -1,0 +1,83 @@
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsfonts, amsthm}
+\usepackage{upgreek}
+\usepackage{amsthm}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{cancel}
+\usepackage{subfigure}
+\usepackage{mathrsfs}
+\usepackage{enumerate}
+%\usepackage{outlines}
+\usepackage[font={sf,it}, labelfont={sf,bf}, labelsep=space, belowskip=5pt]{caption}
+\usepackage{hyperref}
+% \usepackage{minted}
+
+\usepackage{float}
+% \floatplacement{figure}{H}
+
+\usepackage{fancyhdr}
+\usepackage[title]{appendix}
+\usepackage{siunitx}
+
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\sinc}{sinc}
+\DeclareMathOperator{\rref}{rref}
+\DeclareMathOperator{\cof}{cof}
+
+\providecommand{\abs}[1]{\lvert#1\rvert}
+\providecommand{\norm}[1]{\lVert#1\rVert}
+\providecommand{\dx}{\, \mathrm{d}x}
+\providecommand{\dA}{\, \mathrm{d}A}
+% \providecommand{\vint}[2]{\int_{#1} \! #2 \, \mathrm{d}x}
+% \providecommand{\sint}[2]{\int_{\partial #1} \! #2 \, \mathrm{d}A}
+\renewcommand{\div}{\nabla \cdot}
+\providecommand{\e}{\epsilon}
+\providecommand{\shape}{\Omega(p)}
+\providecommand{\boundary}{\partial \shape}
+\providecommand{\vint}[1]{\int_{\shape} \! #1 \, \mathrm{d}x}
+\providecommand{\sint}[1]{\int_{\boundary} \! #1 \, \mathrm{d}A}
+\providecommand{\pder}[2]{\frac{\partial #1}{\partial #2}}
+\providecommand{\tder}[2]{\frac{\mathrm{d} #1}{\mathrm{d} #2}}
+\providecommand{\evalat}[2]{\left.#1\right|_{#2}}
+\newcommand{\defeq}{\vcentcolon=}
+\newtheorem{lemma}{Lemma}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+\makeatletter
+\usepackage{mathtools}
+\newcases{mycases}{\quad}{%
+  \hfil$\m@th\displaystyle{##}$}{$\m@th\displaystyle{##}$\hfil}{\lbrace}{.}
+\makeatother
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\newenvironment{amatrix}[1]{%
+  \left[\begin{array}{@{}*{#1}{c}|c@{}}
+}{%
+  \end{array}\right]
+}
+
+%% + Abtin
+\usepackage{fullpage}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{paralist}
+\usepackage{prettyref}
+\newrefformat{sec}{Section~\ref{#1}}
+\newrefformat{tbl}{Table~\ref{#1}}
+\newrefformat{fig}{Fig.~\ref{#1}}
+\newrefformat{chp}{Chapter~\ref{#1}}
+\newrefformat{eqn}{Eq.~\eqref{#1}}
+\newrefformat{set}{Eq.~Set~\eqref{#1}}
+\newrefformat{alg}{Algorithm~\ref{#1}}
+\newrefformat{apx}{Appendix~\ref{#1}}
+\newcommand\pr[1]{\prettyref{#1}}
+
+\newcommand\todo[1]{\textcolor{magenta}{\bf [TODO: #1]}}
+\renewcommand\vec[1]{\ensuremath{\mathbf #1}}
+\def\x{\vec{x}}
+\def\y{\vec{y}}
+\def\u{\vec{u}}
+\def\ue{\vec{u}^\e}
+\def\strain{\varepsilon}

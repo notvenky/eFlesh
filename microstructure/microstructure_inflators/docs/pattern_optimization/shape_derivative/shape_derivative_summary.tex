@@ -1,0 +1,93 @@
+\documentclass[twocolumn,10pt]{article}
+
+\include{preambles}
+
+\begin{document}
+The minimization problem is generically defined as \note{place-holder;
+  needs constraints etc.}
+\begin{equation}
+  \label{eqn:min}
+  \argmin_\text{admissible $\omega$} J(\omega),
+\end{equation}
+where $J$ is some objective function on the micro structure. Letting
+$S$ denote the compliance tensor, we choose
+\begin{equation}
+  \label{eqn:compObjective}
+  J(\omega) = \frac{1}{2}\norm{S^H(\omega) - S^*}^2_F,
+\end{equation}
+for a microstructure with shape $\omega$. There are several other
+possible choices for the objective functional $J$, such as deviation
+of elasticity tensor or error in displacement. In our setting, we are
+interested in particular values of Poisson ratios and shear moduli
+and the compliance.\note{Justification for use of compliance}
+
+The microstructure boundary $\partial \omega$ is parameterized by a
+vector $\vec{p}$, consisting of, for instance, wire mesh node offsets
+and thicknesses. With proper assumptions, the derivative of $\partial
+\omega$ with respect to $\vec{p}$ is given by
+\begin{equation}
+  \vec{v}_{p_\alpha}(\y,\vec{p}) \defeq
+  \pder{\y}{p_\alpha}\quad\text{for } \y\in \partial\omega,
+\end{equation}
+and defines perturbation velocity fields over the boundary. Using
+$\vec{p}$ the minimization problem can be written as
+\begin{equation}
+  \label{eqn:minParam}
+  \argmin_\text{admissible $\vec{p}$} J(\vec{p})\text{ where }
+  J(\vec{p}) = \frac{1}{2}\norm{S^H(\vec{p}) - S^*}^2_F.
+\end{equation}
+
+The derivative of the objective function is then
+\begin{equation}
+  \label{eqn:paramJacobian}
+  \pder{J}{p_\alpha} = [S^H - S^*]: \pder{S^H}{p_\alpha} = [S^H - S^*]: \d S^H[\vec{v}_{p_\alpha}],
+\end{equation}
+where $\d S^H[\vec{v}_{p_\alpha}]$ is the shape derivative of $S^H$
+with perturbation $\vec{v}_{p_{\alpha}}$.
+
+\para{Shape derivative of elasticity tensor} The shape derivative of
+the homogenized elasticity tensor for microstructure with shape
+$\omega$ and perturbation $\vec{v}$ is defined as the G\^ateaux
+derivative \cite{zolesio2001shapes}
+\begin{equation}
+  \d C^H[\vec{v}] \defeq \lim_{t\downarrow 0} \frac{C^H(\omega(t,\vec{v}))-C^H(\omega)}{t},
+\end{equation}
+where $\omega(t,\vec{v}) \defeq \{\x+t\vec{v} : \x \in \omega\}$. The
+homogenized elasticity tensor \note{give ref}, with a bit of
+manipulation, can be rewritten in the energy form as
+\begin{equation}
+  \label{eqn:EhEnergy}
+  C^H_{ijkl} = \frac{1}{|Y|} \int_\omega (\vec{e}^{ij} +
+  \strain(\vec{w}^{ij})) : C^\text{base} : (\vec{e}^{kl} +
+  \strain(\vec{w}^{kl})) \, \mathrm{d} \y.
+\end{equation}
+Using this form, taking its variation with respect to a
+\emph{permissible} boundary perturbation, integrating by parts, using
+the divergence theorem, and the fact that $\vec{w}^{ij}$ satisfies the
+cell problem, the shape derivative of $C^H$ can be written as
+\begin{align}
+  \label{eqn:elastShapeDer}
+  \d C^H_{ijkl}[\vec{v}] =
+  \frac{1}{|Y|} \int_{\partial \omega} &[(\vec{e}^{ij} + \strain(\vec{w}^{ij})) : C^\text{base}\\
+    &: (\vec{e}^{kl} + \strain(\vec{w}^{kl}))] (\vec{v} \cdot \hat{\vec{n}}) \dA(\y).\notag
+\end{align}
+
+\para{Shape derivative of compliance tensor} The compliance tensor is
+the inverse of elasticity tensor, i.e. $S:C=I$. Using direct
+differentiation
+\begin{equation}
+  \label{eqn:compShapeDer}
+  \d S^H[\vec{v}] = -S^H : \d C^H[\vec{v}] : S^H.
+\end{equation}
+Combining the results from \pr{eqn:paramJacobian},
+\pr{eqn:elastShapeDer}, and \pr{eqn:compShapeDer}, one can compute $\pder{J}{p_\alpha}$.
+
+\para{Numerical computation} The integrand in \pr{eqn:EhEnergy} is
+cubic over each boundary element ($\vec{e}^{ij} +
+\strain(\vec{w}^{ij})$ and $\vec{v}\cdot\hat{\vec{n}}$ are linear) and
+we use quadrature that evaluate the cubic function exactly.
+
+\bibliographystyle{plain}
+\bibliography{References}
+
+\end{document}

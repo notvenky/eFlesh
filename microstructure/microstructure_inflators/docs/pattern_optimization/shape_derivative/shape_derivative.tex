@@ -1,0 +1,303 @@
+\documentclass[10pt]{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath, amssymb, amsfonts, amsthm}
+\usepackage{upgreek}
+\usepackage{amsthm}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{cancel}
+\usepackage{subfigure}
+\usepackage{mathrsfs}
+\usepackage{outlines}
+\usepackage[font={sf,it}, labelfont={sf,bf}, labelsep=space, belowskip=5pt]{caption}
+\usepackage{hyperref}
+% \usepackage{minted}
+\usepackage{enumerate}
+\usepackage{titling}
+
+\usepackage{fancyhdr}
+\usepackage[title]{appendix}
+
+\DeclareMathOperator{\sgn}{sgn}
+
+\pagestyle{fancy}
+\headheight 24pt
+\headsep    12pt
+\lhead{Shape Derivatives for Functions of Homogenized Elasticity Tensors}
+\rhead{\today}
+\fancyfoot[C]{} % hide the default page number at the bottom
+\lfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+\providecommand{\abs}[1]{\lvert#1\rvert}
+\providecommand{\norm}[1]{\lVert#1\rVert}
+\providecommand{\dx}{\, \mathrm{d}x}
+\providecommand{\dA}{\, \mathrm{d}A}
+% \providecommand{\vint}[2]{\int_{#1} \! #2 \, \mathrm{d}x}
+% \providecommand{\sint}[2]{\int_{\partial #1} \! #2 \, \mathrm{d}A}
+\renewcommand{\div}{\nabla \cdot}
+\providecommand{\shape}{\Omega(p)}
+\providecommand{\mesh}{\mathcal{M}}
+\providecommand{\boundary}{\partial \shape}
+\providecommand{\vint}[1]{\int_{\shape} \! #1 \, \mathrm{d}x}
+\providecommand{\sint}[1]{\int_{\boundary} \! #1 \, \mathrm{d}A}
+\providecommand{\pder}[2]{\frac{\partial #1}{\partial #2}}
+\providecommand{\tder}[2]{\frac{\mathrm{d} #1}{\mathrm{d} #2}}
+\providecommand{\evalat}[2]{\left.#1\right|_{#2}}
+\newcommand{\defeq}{\vcentcolon=}
+\newtheorem{lemma}{Lemma}
+
+\makeatletter
+\usepackage{mathtools}
+\newcases{mycases}{\quad}{%
+  \hfil$\m@th\displaystyle{##}$}{$\m@th\displaystyle{##}$\hfil}{\lbrace}{.}
+\makeatother
+
+\setlength{\droptitle}{-80pt}
+\title{Shape Derivatives for Functions of Homogenized Elasticity Tensors}
+\author{Julian Panetta}
+
+% BEGIN DOCUMENT
+\begin{document}
+\maketitle
+
+We compute the shape derivative of a homogenized elasticity tensor and show how
+it can be used to optimize various objective functions.
+
+Recall from the periodic homogenization writeup that each component of
+homogenized elasticity tensor for a microstructure $\omega$ in unit cell $Y$
+can be written as an energy-like integral involving the fluctuation
+displacements, ${\bf w}^{ij}$:
+\begin{equation}
+    \label{eqn:EhEnergy}
+    C^H_{ijkl} = \frac{1}{|Y|} \int_\omega (e^{ij} + e({\bf w}^{ij})) : C : (e^{kl} + e({\bf w}^{kl})) \, \mathrm{d} {\bf y}.
+\end{equation}
+where the fluctuation displacements solve the cell problem:
+\begin{equation}
+\label{eqn:cell_constraint}
+\begin{aligned}
+     -\nabla \cdot (C : [e^{ij} + e({\bf w}^{ij})]) = {\bf 0} & \quad \text{in } \omega \\
+{\bf \hat n} \cdot (C : [e^{ij} + e({\bf w}^{ij})]) = {\bf 0} & \quad \text{on } \partial \omega \setminus \partial Y \\
+    {\bf w}^{ij}({\bf y})\ Y \text{-periodic} & \\
+    \int_\omega \! {\bf w}^{ij}({\bf y})  \, \mathrm{d} {\bf y} =  {\bf 0}
+\end{aligned}
+\end{equation}
+for each of the 6 (3 in 2D), constant strain basis tensors $e^{ij}$.
+
+% Another way of phrasing this problem is to solve for full displacement ${\bf u}^{ij}$ such that:
+% \begin{align*}
+%      -\nabla \cdot (C : e({\bf u}^{ij})) = {\bf 0} & \quad \text{in } \omega \\
+% {\bf \hat n} \cdot (C : e({\bf u}^{ij})) = {\bf 0} & \quad \text{on } \partial \omega \setminus \partial Y \\
+%     \int_\omega \! {\bf u}^{ij}({\bf y})  \, \mathrm{d} {\bf y} =  {\bf 0}, \quad
+%     \frac{1}{|Y|} \int_\omega \! e({\bf u}^{ij})  & \, \mathrm{d} {\bf y} =  e^{ij} \\
+%     e({\bf u}^{ij}) \quad Y \text{-periodic} &
+% \end{align*}
+% This solution is called a ``linear plus periodic'' displacement because  up to
+% a rigid translation, ${\bf u}^{ij}({\bf y}) = {\bf w}^{ij} + e^{ij} {\bf y}$.
+% This formulation is nice because first it allows us to express the homogenized
+% coefficients as even more energy-like terms:
+% \begin{equation}
+%     \label{eqn:EhEnergy}
+%     C^H_{ijkl} = \frac{1}{|Y|} \int_Y e({\bf u}^{ij}) : C : e({\bf u}^{kl}) \, \mathrm{d} {\bf y}.
+% \end{equation}
+% Second, the new cell problem is a 
+
+\section{Shape Derivative of $C^H_{ijkl}$}
+Because energy functionals are self-adjoint, the shape derivative of
+(\ref{eqn:EhEnergy}) turns out to be surprisingly simple. We start by computing
+the change in $C^H_{ijkl}$ caused by an arbitrary boundary perturbation, then
+give the result for parametrized microstructure boundaries.
+
+\subsection{Arbitrary Boundary Perturbations}
+Consider a perturbation of the shape's boundary, $\delta\omega$, caused by
+advecting the boundary with an infinitesimal velocity field ${\bf v}$. The
+resulting variation of $C^H_{ijkl}$ for $ij \ne kl$ ($ij = kl$ gets an
+identical final result by product rule) is:
+$$
+\delta C^H_{ijkl} = \left<\pder{C^H_{ijkl}}{\omega}, \delta \omega\right>
+    + \left<\pder{C^H_{ijkl}}{{\bf w}^{ij}}, \delta {\bf w}^{ij}\right>
+    + \left<\pder{C^H_{ijkl}}{{\bf w}^{kl}}, \delta {\bf w}^{kl}\right>.
+$$
+Consider the linear functional
+$\left<\pder{C^H_{ijkl}}{{\bf w}^{ij}}, \cdot \right>$  on an arbitrary
+admissible perturbation of ${\bf w}^{ij}$ (i.e. periodic and with no rigid
+translation component), $\phi$:
+$$
+\left<\pder{C^H_{ijkl}}{{\bf w}^{ij}}, \phi\right> =
+\lim_{h \to 0} \, \tder{}{h} \frac{1}{|Y|} \int_\omega (e^{ij} + e({\bf w}^{ij} + h \phi)) : C : (e^{kl} + e({\bf w}^{kl})) \, \mathrm{d} {\bf y}
+$$
+Differentiating under the integral and using the linearity of strain, this is:
+$$
+\left<\pder{C^H_{ijkl}}{{\bf w}^{ij}}, \phi\right> =
+\frac{1}{|Y|} \int_\omega e(\phi) : C : (e^{kl} + e({\bf w}^{kl})) \, \mathrm{d} {\bf y}
+$$
+Then, integrating by parts to move the strain off $\phi$:
+$$
+\left<\pder{C^H_{ijkl}}{{\bf w}^{ij}}, \phi\right> =
+-\frac{1}{|Y|} \int_\omega \phi \cdot \left(\nabla \cdot \left[C : (e^{kl} + e({\bf w}^{kl}))\right]\right) \, \mathrm{d} {\bf y}
++ \frac{1}{|Y|} \int_{\partial \omega} \phi \cdot \left(\hat{{\bf n}} \cdot \left[C : (e^{kl} + e({\bf w}^{kl}))\right]\right) \, \mathrm{d} {\bf y}
+$$
+The volume integral vanishes because ${\bf w}^{kl}$ solves the $kl^\text{th}$
+cell problem. The $\partial \omega \setminus \partial Y$ portion of the surface
+integral vanishes for the same reason, and the $\partial \omega \cap \partial
+Y$ portion vanishes because $\phi$, $C$, $e^{kl}$, and $e({\bf w}^{kl})$ are all
+either constant or periodic. The same argument holds for
+$\left<\pder{C^H_{ijkl}}{{\bf w}^{kl}}, \phi\right>$, so we have
+$$
+\left<\pder{C^H_{ijkl}}{{\bf w}^{ij}}, \phi\right> =
+\left<\pder{C^H_{ijkl}}{{\bf w}^{kl}}, \phi\right> = 0
+$$
+without solving any adjoint problem!
+Thus Reynold's transport theorem gives the full shape derivative:
+$$
+\dot{C}^H_{ijkl}[{\bf v}] \defeq
+\delta C^H_{ijkl} = \left<\pder{C^H_{ijkl}}{\omega}, \delta \omega\right> =
+\boxed{
+\frac{1}{|Y|} \int_{\partial \omega} \left[(e^{ij} + e({\bf w}^{ij})) : C : (e^{kl} + e({\bf w}^{kl}))\right] {\bf v} \cdot {\bf \hat{n}} \dA({\bf y}).}
+$$
+
+\subsection{Parametrized Boundary Perturbations}
+In our setting, the microstructure boundary $\partial \omega$ is parametrized by a vector ${\bf p}$,
+consisting of e.g. wire mesh node offsets and thicknesses. This parametrization is smooth
+in the sense that we can define parameter velocity fields ${\bf v}_{p_i}({\bf y}, {\bf
+p})$ at almost all points ${\bf y} \in \partial \omega({\bf p}) \setminus \partial Y$.
+These velocity fields give how the point ${\bf y}$ moves to stay on the
+boundary as $p_a$ changes. The derivative of $C^H_{ijkl}$ with respect to
+parameter $p_a$ is just $\dot{C}^H_{ijkl}$ evaluated on the ${\bf v}_{p_a}$
+velocity field:
+\begin{equation}
+\label{eqn:paramDerivative}
+\pder{C^H_{ijkl}}{p_a} =
+\frac{1}{|Y|} \int_{\partial \omega} \left[(e^{ij} + e({\bf w}^{ij})) : C : (e^{kl} + e({\bf w}^{kl}))\right] {\bf v}_{p_a} \cdot {\bf \hat{n}} \dA({\bf y}).
+\end{equation}
+Thus, we can compute the derivative of each homogenized coefficient with
+respect to each parameter $p_a$ provided that we know the normal velocity
+scalar field induced by changing $p_a$, ${\bf \hat{n}} \cdot {\bf v}_{p_a}$.
+
+\subsection{Discretization}
+If linear finite elements are used, (\ref{eqn:paramDerivative}) is
+particularly easy to compute; the energy density term
+$(e^{ij} + e({\bf w}^{ij})) : C : (e^{kl} + e({\bf w}^{kl}))$
+is constant on each boundary element and can be stored as a per-boundary-element tensor $C^e_{ijkl}$.
+Then the integral can be computed as:
+$$
+\pder{C^H_{ijkl}}{p_a} =
+\sum_e \frac{1}{|Y|} C^e_{ijkl} \int_e {\bf v}_{p_a} \cdot \hat{{\bf n}} \dA({\bf y}) := \frac{1}{|Y|} C^e_{ijkl} v^e,
+$$
+where $v^e$ is the integral of parameter $p_a$'s (linear) normal velocity field
+over boundary element $e$. In other words, computing how a particular
+$C_{ijkl}$ changes with respect to $p_a$ is just a dot product.
+
+If higher order elements are used, we can still use this trick if we
+approximate either the energy density term or the normal velocity field as
+piecewise constant. However, to compute the integral exactly requires
+quadrature over each boundary element.
+
+\section{Objective Functions}
+\subsection{Elasticity Tensor Fit}
+The simplest objective function is the squared Frobenius norm distance to a
+target tensor $C^*$:
+$$
+J_C = \frac{1}{2} ||C^H - C^*||^2_F = \frac{1}{2} \left[C^H - C^*\right]_{ijkl} \left[C^H - C^*\right]_{ijkl}
+$$
+Then
+$$
+\pder{J_C}{p_a} = \left[C^H - C^*\right]_{ijkl} \pder{C^H_{ijkl}}{p_a}.
+$$
+
+Unfortunately, as discussed in the ``Objectives for Pattern Parameter
+Optimization'' writeup, this objective is poorly behaved. A better one uses
+the compliance tensor, $S = C^{-1}$, or some function of it's entries (e.g. Young's
+modulus, Poisson ratio).
+
+\subsection{Compliance Tensor Fit}
+Inverting rank $4$ tensors requires a bit more than just inverting the
+flattened tensor representation; see the ``Tensor Flattening'' writeup for the
+details. But following the formula there, we can differentiate the inverted
+tensor $S = C^{-1}$:
+\begin{align*}
+    F(C : S) &= F(I) \quad \Longrightarrow \\
+    F(C) \mathscr{D} F(S) &= \mathscr{D}^{-1} \quad \Longrightarrow \\
+    \pder{}{p_a} \left[ F(C) \mathscr{D} F(S) \right] &= \pder{F(C)}{p_a} \mathscr{D} F(S) + F(C) \mathscr{D} \pder{F(S)}{p_a} = 0 \Longrightarrow \\
+    \pder{F(S)}{p_a} = -\mathscr{D}^{-1} F(C)^{-1} \pder{F(C)}{p_a} \mathscr{D} F(S) &= -F(S)\mathscr{D} \pder{F(C)}{p_a} \mathscr{D} F(S) = -F\left(S : \pder{F(C)}{p_a} : S\right),
+\end{align*}
+where we used $F(C)^{-1} = \mathscr{D} F(S) \mathscr{D}$, which follows
+directly from the inversion formula in the tensor flattening writeup. The
+derivative of the compliance tensor, $\pder{S^H}{p_a}$, can then be read off by
+unflattening $\pder{F(S)}{p_a}$.
+
+Now the squared Frobenius norm distance to a target compliance tensor $S^*$ can
+be differentiated:
+\begin{align*}
+    J_S &= \frac{1}{2} ||S^H - S^*||^2_F \\
+    \pder{J_S}{p_a} &= \left[S^H - S^*\right]_{ijkl} \pder{S^H_{ijkl}}{p_a}.
+\end{align*}
+As mentioned in the objectives writeup, it may instead be desirable to use some
+other weighting of the Frobenius norm terms. For example, we could use Frobenius
+norm distance in flattened form:
+\begin{align*}
+    J_{F(S)} &= \frac{1}{2} \norm{F(S) - F(S^*)}^2_F =
+        \frac{1}{2} \left[F(S) - F(S^*)\right]_{ij}
+                    \left[F(S) - F(S^*)\right]_{ij} \\
+                    \pder{J_{D^{-1}}}{p_a} &= [D^{-1} - {D^*}^{-1}]_{ij}
+                    \left[\pder{D^{-1}}{p_a}\right]_{ij} = 
+        \pder{J_{F(S)}}{p_a} = \left[F(S) - F(S^*)\right]_{ij}
+                    \left[\pder{F(S)}{p_a}\right]_{ij}.
+\end{align*}
+
+\subsection{Elastic Moduli Fit}
+For objectives that can be written as functions of the Elastic moduli (or for
+finding extremal moduli), it's also useful to differentiate the moduli.
+To simplify notation for the following, we are going to overload $S$ to be the
+flattened homogenized compliance tensor.
+
+Recall that for orthotropic, axis-aligned materials, the flattened compliance
+tensor looks like:
+$$
+F(S) = \begin{pmatrix}
+    \frac{1}{E_x} & -\frac{\nu_{yx}}{E_y} & -\frac{\nu_{zx}}{E_z} & 0 & 0 & 0 \\
+    -\frac{\nu_{yx}}{E_y} & \frac{1}{E_y} & -\frac{\nu_{zy}}{E_z} & 0 & 0 & 0 \\
+    -\frac{\nu_{zx}}{E_z} & -\frac{\nu_{zy}}{E_z} & \frac{1}{E_z} & 0 & 0 & 0 \\
+    0 & 0 & 0 & \frac{1}{4 \mu_{yz}} & 0 & 0 \\
+    0 & 0 & 0 & 0 & \frac{1}{4 \mu_{zx}} & 0 \\
+    0 & 0 & 0 & 0 & 0 & \frac{1}{4 \mu_{xy}}
+\end{pmatrix}.
+$$
+The orthotropic moduli can therefore be written as simple functions of the
+compliance tensor entries. For clarity, we overload $S$ and $C$ to mean their
+flattened counterparts when indexed with only 2 indices (i.e. $S_{ij} \defeq
+F(S)_{ij}$, $C_{ij} \defeq F(C)_{ij}$):
+\begin{gather*}
+E_x = \frac{1}{S_{00}}, \quad
+E_y = \frac{1}{S_{11}}, \quad
+E_z = \frac{1}{S_{22}}, \\
+\nu_{yx} = -E_y S_{01}, \quad
+\nu_{zx} = -E_z S_{02}, \quad
+\nu_{zy} = -E_z S_{12}, \\
+\mu_{yz} = \frac{1}{4 S_{33}}, \quad
+\mu_{zx} = \frac{1}{4 S_{44}}, \quad
+\mu_{xy} = \frac{1}{4 S_{55}}.
+\end{gather*}
+Thus:
+\begin{gather*}
+    \pder{E_x}{p_a} = -\frac{1}{S_{00}^2} \pder{S_{00}}{p_a}, \quad
+    \pder{E_y}{p_a} = -\frac{1}{S_{11}^2} \pder{S_{11}}{p_a}, \quad
+    \pder{E_z}{p_a} = -\frac{1}{S_{22}^2} \pder{S_{22}}{p_a}, \\
+    \pder{\nu_{yx}}{p_a} = \frac{S_{01}}{S_{11}^2} \pder{S_{11}}{p_a} - E_y \pder{S_{01}}{p_a}, \quad
+    \pder{\nu_{zx}}{p_a} = \frac{S_{02}}{S_{22}^2} \pder{S_{22}}{p_a} - E_y \pder{S_{02}}{p_a}, \quad
+    \pder{\nu_{zy}}{p_a} = \frac{S_{12}}{S_{22}^2} \pder{S_{22}}{p_a} - E_y \pder{S_{12}}{p_a}, \\
+    \pder{\mu_{yx}}{p_a} = -\frac{1}{4 S_{33}^2} \pder{S_{33}}{p_a}, \quad
+    \pder{\mu_{zx}}{p_a} = -\frac{1}{4 S_{44}^2} \pder{S_{44}}{p_a}, \quad
+    \pder{\mu_{xy}}{p_a} = -\frac{1}{4 S_{55}^2} \pder{S_{55}}{p_a}.
+\end{gather*}
+Since shear moduli also appear on the lower diagonal of $F(C)$, we can express
+their shape derivatives more simply as:
+$$
+    \pder{\mu_{yx}}{p_a} = \pder{C_{33}}{p_a}, \quad
+    \pder{\mu_{zx}}{p_a} = \pder{C_{44}}{p_a}, \quad
+    \pder{\mu_{xy}}{p_a} = \pder{C_{55}}{p_a}.
+$$
+
+\end{document}

@@ -1,0 +1,77 @@
+\usepackage[latin1]{inputenc}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{upgreek}
+\usepackage{hyperref}
+
+\usepackage[absolute,overlay]{textpos}
+
+\usepackage{media9}
+
+\setbeamercolor{framesource}{fg=gray}
+\setbeamerfont{framesource}{size=\tiny}
+
+\newcommand{\source}[1]{\begin{textblock*}{4cm}(8.7cm,8.6cm)
+    \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
+        \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Image Source: {#1}
+    \end{beamercolorbox}
+\end{textblock*}}
+
+\providecommand{\abs}[1]{\lvert#1\rvert}
+\providecommand{\norm}[1]{\lVert#1\rVert}
+\providecommand{\dvar}[1]{\, \mathrm{d}#1}
+\providecommand{\dx}{\, \dvar{x}}
+\providecommand{\dy}{\, \dvar{y}}
+\providecommand{\ds}{\, \dvar{s}}
+\providecommand{\dt}{\, \dvar{t}}
+\providecommand{\du}{\, \dvar{u}}
+\providecommand{\dphi}{\, \dvar{u}}
+\providecommand{\dtheta}{\, \dvar{\theta}}
+\providecommand{\dtau}{\, \dvar{\tau}}
+\providecommand{\dr}{\, \dvar{r}}
+\providecommand{\dA}{\, \dvar{A}}
+% \providecommand{\vint}[2]{\int_{#1} \! #2 \, \mathrm{d}x}
+% \providecommand{\sint}[2]{\int_{\partial #1} \! #2 \, \mathrm{d}A}
+\renewcommand{\div}{\nabla \cdot}
+\providecommand{\shape}{\Omega(p)}
+\providecommand{\lagrangian}{\mathcal{L}}
+\providecommand{\mesh}{\mathcal{M}}
+\providecommand{\boundary}{\partial \shape}
+\providecommand{\vint}[1]{\int_{\shape} \! #1 \dx }
+\providecommand{\vintd}[2]{\int_{#1} \! #2 \dx }
+\providecommand{\sint}[1]{\int_{\boundary} \! #1 \, \dA}
+\providecommand{\sintd}[2]{\int_{\partial #1} \! #2 \, \dA}
+\providecommand{\pder}[2]{\frac{\partial #1}{\partial #2}}
+\providecommand{\tder}[2]{\frac{\mathrm{d} #1}{\mathrm{d} #2}}
+\providecommand{\evalat}[2]{\left.#1\right|_{#2}}
+\providecommand{\e}{\epsilon}
+\newcommand{\defeq}{\vcentcolon=}
+
+% \usepackage{minted}
+% \usemintedstyle{perldoc}
+% tiny, scriptsize, footnotesize, small, normalsize, large, Large, LARGE,
+% huge Huge
+% \newminted{d}    {fontsize=\tiny, frame=lines, framesep=1mm}
+% \newminted{bash} {fontsize=\tiny, frame=lines, framesep=1mm}
+% \newmintedfile{d}{fontsize=\tiny, frame=lines, framesep=1mm}
+
+\usetheme[numbers, compress]{NYU}
+% Get rid of the navigation icons
+\setbeamertemplate{navigation symbols}{}
+
+\title{Achieving Target Deformations}
+\author{}
+\date{}
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\input{introduction}
+\input{material_optimization}
+\input{homogenization}
+\input{patterns}
+\input{pattern_optimization}
+
+\end{document}

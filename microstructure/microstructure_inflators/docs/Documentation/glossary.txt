@@ -1,0 +1,27 @@
+- isotropic: material which presents same properties in all directions
+- anisotropic: directionally dependent material
+- orthotropic: materials with properties that differ along three orthogonal axes of symmetry.
+- microstructure design and optimization: producte microstructures or material with a given physical
+  property. Also, composition of materials.
+- homogenized properties: homogenization is the process of replacing an equation with a highly
+  oscilatory coefficient with one with a homogeneous (uniform) coefficient.
+- shape optimization: objective is to find the shape which is optimal in that it minimizes a certain
+  cost function whule satisfying given constraints. Work on a set of allowable shapes which have
+fixed topological properties, such as a fixed number of holes.
+- topology optimization: in addition to shape opt., it is concerned with the number of connected
+  components and boundaries belonging to the domain.  Optimizes material layout within a given
+  design space.
+- compliant mechanisms: the idea of designing mechanisms deriving some of their mobility by elastic
+  deformation in one or more elements. This means they gain at least some of their mobility from the
+  deflection of flexible members.
+- poisson's ratio: v, signed ratio of transverse strain to axial strain. v = de_trans / de_axial.
+- young's module: measure of stifness of a solid material: E = sigma(e)/e = (F/A_0)/(Delta/L_0)= (F
+  L_0)/(A_0 DeltaL), Unit: Pa = N/m^2 (pascal)
+- printability:
+    - no enclosed voids?
+    - respect printability threshold?
+    - connected components should be supported.
+- flexural rigidity: defined as the force couple required to bend a non-rigid structure in one unit
+  of curvature. 
+- symmetry orbits
+

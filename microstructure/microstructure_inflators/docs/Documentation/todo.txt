@@ -1,0 +1,5 @@
+#TODOs: 
+
+- Notes about running code. Mainly WCSOptimization_cli and Isosurface
+- How to run scripts for testing set of targets? 
+

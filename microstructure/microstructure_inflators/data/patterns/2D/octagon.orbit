@@ -1,0 +1,58 @@
+{
+    "isotropic_vertex_orbits": [
+        [
+            0, 
+            1, 
+            2, 
+            3, 
+            4, 
+            5, 
+            6, 
+            7
+        ]
+    ], 
+    "isotropic_edge_orbits": [
+        [
+            0, 
+            1, 
+            6, 
+            7
+        ], 
+        [
+            2, 
+            3, 
+            4, 
+            5
+        ]
+    ], 
+    "orthotropic_vertex_orbits": [
+        [
+            0, 
+            3, 
+            4, 
+            7
+        ], 
+        [
+            1, 
+            2, 
+            5, 
+            6
+        ]
+    ], 
+    "orthotropic_edge_orbits": [
+        [
+            0, 
+            1, 
+            6, 
+            7
+        ], 
+        [
+            2, 
+            5
+        ], 
+        [
+            3, 
+            4
+        ]
+    ]
+}

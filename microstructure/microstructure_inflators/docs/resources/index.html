@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>Resources</title>
+
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script type="text/javascript" src="js/Markdown.Converter.js"></script>
+    </head>
+    <body>
+        <div class="contents">
+        </div>
+        <script>
+            $(document).ready(function() {
+                var converter = new Markdown.Converter();
+                var markdownToHtml = converter.makeHtml;
+                $.get("overview.markdown").success(function(data) {
+                    $(".contents").html(markdownToHtml(data));
+                });
+            });
+        </script>
+    </body>
+</html>

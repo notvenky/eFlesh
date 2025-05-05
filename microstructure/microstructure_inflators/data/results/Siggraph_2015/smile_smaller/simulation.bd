@@ -1,0 +1,9 @@
+{
+	"regions": [
+		{ "type": "dirichletx", "value": [3, 0, 0], "box": { "minCorner": [-0.142829, -0.142829, -0.142829], "maxCorner": [ 0.142829, 50.1428, 10.1428] } },
+		{ "type": "dirichletx", "value": [-3, 0, 0], "box": { "minCorner": [49.8572, -0.142829, -0.142829], "maxCorner": [ 50.1428, 50.1428, 10.1428] } },
+		{ "type": "dirichlety", "value": [0, 0, 0], "box": { "minCorner": [24.8572, -0.142829, 9.85717], "maxCorner": [ 25.1428, 0.142829, 10.1428] } },
+		{ "type": "dirichlety", "value": [0, 0, 0], "box": { "minCorner": [24.8572, -0.142829, -0.142829], "maxCorner": [ 25.1428, 0.142829, 0.142829] } },
+		{ "type": "dirichletz", "value": [0, 0, 0], "box": { "minCorner": [24.8572, 49.8572, 9.85717], "maxCorner": [ 25.1428, 50.1428, 10.1428] } }
+	]
+}

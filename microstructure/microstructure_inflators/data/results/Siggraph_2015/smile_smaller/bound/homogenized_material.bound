@@ -1,0 +1,5 @@
+{
+    "_description": "Paramter ranges used for bar examples",
+    "lower": [ [0,  0.2], [1,  0.05] ],
+    "upper": [ [0,  3], [1,  0.4] ]
+}

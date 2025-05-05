@@ -1,0 +1,88 @@
+\section{Implementation}
+This section summarizes the all sections above in terms of work needed.  This
+aims to be a giant to-do list.
+
+There are essentially two independent modules:
+\begin{description}
+\item{\bf Convert arbitrary elasticity tensors into pattern parameters}\\
+{\it Input:} An array of elasticity tensors.
+
+{\it Output:} An array of pattern parameters (and fitting errors). 
+
+{\it Validation:} If the homogenized elasticity tensor has a closed formula, we
+should validate it against a fine-scale simulation. We also should use this
+stage to generate a bound for all possible material properties that can be
+generated with a given type of pattern.
+
+{\it Physical experiments:}  Validate homogenization formula on simple patterns.\\
+
+Approach 1: Look-up Table
+\begin{itemize}
+\item For microstructures with closed formulas for homogenized elasticity
+    tensors, sample the space of all possible pattern parameter combinations.
+\item For microstructures without closed formulas, use the representative volume
+method (numerical coarsening) to find them.  I.e., for all possible pattern
+parameters, generate a cube of microstructures and simulate with periodic
+boundary conditions its behavior using a very fine mesh or mesh-free FEM.
+Use \cite{Kharevych2009} to obtain the homogenized elasticity tensors.
+\item Build a table that supports fast lookup of pattern parameters by
+    elasticity tensor. Return an interpolation of closest entries using a
+    reasonable distance measure.
+\item Optionally run a few iterations of the optimization described in Approach
+      2 to improve the fit.
+\end{itemize}
+
+Approach 2: Direct Optimization of Material Parameters.
+\begin{itemize}
+\item For microstructures with closed formulas for homogenized elasticity
+    tensors, directly optimize the Frobenius distance from the target elasticity
+    tensor with a nonlinear optimization algorithm, e.g. Newton's method.
+\end{itemize}
+
+\item{\bf Generate microstructure geometry}\\
+{\it Input:} An array of pattern parameters.
+
+{\it Output:} Microstructure mesh.
+
+{\it Validation:} Simulate the synthesized microstructure to see if behaves like
+a homogenization of the pattern.
+
+{\it Physical experiments:} Validate generated patterns in experiments.
+
+Approach 1: Tile pattern for each element and stitch.
+\begin{itemize}
+\item Write code to generate regular tiled patch for each element.
+\item Write code to stitch patches together without significantly effect the material
+properties.
+\item Verify stitching does not introduce artifacts globally.
+\end{itemize}
+
+Approach 2: Tracing dual graph and place holes.
+\begin{itemize}
+\item Implement or borrow code for streamline tracing.  Make sure streamlines
+form a network.
+\item Write code to procedurally generate holes at each stream line
+intersection.
+\item Verify the resulting mesh is a valid microstructure.
+\end{itemize}
+
+Approach 3: Isosurface synthesis.
+\begin{itemize}
+    \item Register the per-element lamination directions.
+    \item Find $p$ scalar fields whose isosurface normals fit to the lamination
+        directions.
+    \item Generate a single mesh of the unioned isosurface extrusions.
+\end{itemize}
+\end{description}
+
+There is also work involved in generating results and validations.
+\begin{itemize}
+\item Extend the mesh-free FEM simulation to 3D.
+\item Material property painting program for generating inputs.
+\item Code for computing homogenized elasticity tensors from
+    \cite{Kharevych2009}. We need this to generate an elasticity tensor given a
+    load specification and a deformation field.
+\end{itemize}
+
+
+
