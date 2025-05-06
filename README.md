@@ -11,7 +11,7 @@
 <div align="center">
     <a href="https://e-flesh.com"><img src="https://img.shields.io/static/v1?label=Project%20Page&message=Website&color=blue"></a> &ensp;
     <a href=""><img src="https://img.shields.io/static/v1?label=Paper&message=Arxiv&color=red"></a> &ensp; 
-    <a href=""><img src="https://img.shields.io/static/v1?label=CAD-to-eFlesh&message=Conversion&color=pink"></a> &ensp;
+    <a href="https://github.com/notvenky/eFlesh/blob/main/microstructure/conversion-docs.md"><img src="https://img.shields.io/static/v1?label=CAD-to-eFlesh&message=Conversion&color=blue"></a> &ensp;
     <a href=""><img src="https://img.shields.io/static/v1?label=Community&message=Discord&color=violet"></a> &ensp;
     
 </div>
