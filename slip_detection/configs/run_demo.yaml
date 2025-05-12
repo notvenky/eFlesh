@@ -1,0 +1,36 @@
+defaults:
+  - _self_
+
+image_save_dir: ${env_vars.project_root}/robot_images
+image_buffer_size: 3
+device: cpu
+
+task: door_opening
+
+vqvae_load_dir: null
+vqvae_n_embed: 16
+temperature: 0.000001
+sequentially_select: true
+
+run_offline: false
+use_depth: false
+
+robot_params:
+  h: 0.6
+  max_h: 0.06
+  max_base: 0.08
+  abs_gripper: True
+  rot_unit: axis
+
+network:
+  host: "127.0.0.1"
+  remote: "127.0.0.1"
+  camera_port: 32922
+  action_port: 8081
+  flag_port: 2828
+
+wandb:
+  entity: ${env_vars.wandb.entity}
+  project: imitation-in-homes
+  id: null
+  save_code: true

@@ -1,0 +1,8 @@
+_target_: robot.xarm.listener.Listener
+xarm: null
+port_configs: 
+  host: ${network.host_address}
+  remote: ${network.remote_address}
+  action_port: ${network.action_port}
+  flag_port: ${network.flag_port}
+  xarm_ip: ${network.xarm_ip}

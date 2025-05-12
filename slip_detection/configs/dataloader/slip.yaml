@@ -1,0 +1,11 @@
+train_dataset:
+  _target_: read_data.slip.SlipDataset
+  data_path: "/home/enes/data/slip_detection_scale/"
+  seq_len: 45
+  downsample: 15
+
+val_dataset:
+  _target_: read_data.slip.SlipDataset
+  data_path: "/home/enes/data/slip_detection_scale_val/"
+  seq_len: 45
+  downsample: 15

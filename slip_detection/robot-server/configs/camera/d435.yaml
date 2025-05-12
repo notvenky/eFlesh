@@ -1,0 +1,5 @@
+camera1:
+  _target_: camera.d435i_publisher.D435ImagePublisher
+  host: ${network.host_address}
+  port: ${network.head_camera_port}
+  use_depth: ${use_depth}

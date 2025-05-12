@@ -1,0 +1,12 @@
+_target_: robot.position.listener.Listener
+host: ${network.host_address}
+hello_robot: null
+hello_robot_config: ${robot_cfg}
+gripper_safety_limits: [-1.0, 1.0]
+translation_safety_limits: [-0.5, 0.5]
+stream_during_motion: True
+port_configs: 
+  host: ${network.host_address}
+  remote: ${network.remote_address}
+  action_port: ${network.action_port}
+  flag_port: ${network.flag_port}

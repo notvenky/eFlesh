@@ -1,0 +1,24 @@
+defaults:
+  - _self_
+  - network: network
+  - camera: d405
+  - controller: position
+  - override hydra/hydra_logging: disabled
+  - override hydra/job_logging: disabled
+
+use_depth: False
+robot_cfg:
+  stretch_gripper_max: 150
+  stretch_gripper_min: 0
+  stretch_gripper_tight: -35
+  sticky_gripper: false
+  closing_threshold: 0.85
+  reopening_threshold: 0.8
+  # Value below should be null if we want it to be computed from 
+  gripper_threshold_post_grasp_list: null
+
+hydra:  
+  output_subdir: null  
+  run:  
+    dir: .
+  

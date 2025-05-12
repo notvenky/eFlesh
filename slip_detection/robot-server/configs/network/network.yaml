@@ -1,0 +1,8 @@
+# Local host
+host_address: 127.0.0.1 # robot
+remote_address: 127.0.0.1 # robot
+
+camera_port: 32922
+action_port: 8081
+flag_port: 2828
+xarm_ip: 192.168.1.216

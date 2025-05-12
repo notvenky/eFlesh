@@ -1,0 +1,26 @@
+defaults:
+  - _self_
+  - agent: lstm
+  - dataloader: slip
+
+root_dir: "/home/hello-robot/enes/slip-detection-demo"
+
+seed: 2
+device: cpu
+use_tb: true
+batch_size: 32
+
+experiment: train
+experiment_label: lstm_box
+
+train_dataset: ${dataloader.train_dataset}
+val_dataset: ${dataloader.val_dataset}
+
+load_bc: true
+bc_weight: "checkpoint/slip-detection/checkpoint.pt"
+eval: true
+
+num_train_steps: 10000
+log_every_steps: 100
+save_every_steps: 1000
+eval_every_steps: 1000

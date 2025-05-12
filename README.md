@@ -18,7 +18,48 @@
 
 #####
 
-## 
+## Getting Started
+```
+git clone https://github.com/notvenky/eFlesh.git
+cd eFlesh
+conda env create -f env.yml
+```
+
+## Microstructure
+### Microstructure Inflators
+#### This requires some dependancies: [oneTBB](https://github.com/uxlfoundation/oneTBB/blob/master/INSTALL.md) and [BOOST](https://www.boost.org/users/history/version_1_83_0.html)
+```
+cd eFlesh/microstructure/microstructure_inflators
+mkdir build && cd build
+```
+Please replace the path placeholders below to the correct local paths
+```
+cmake -DCMAKE_BUILD_TYPE=release .. -DTBB_ROOT=</path/to/oneTBB/installation> -DBoost_NO_SYSTEM_PATHS=ON -DBOOST_ROOT=</path/to/boost_1_83_0>
+```
+```
+make -j4 stitch_cells_cli
+```
+```
+make -j4 cut_cells_cli
+```
+```
+make -j4 stack_cells
+```
+
+In the conversion notebooks ```regular.ipynb``` and ```cut-cell.ipynb```, ensure to provide the correct paths against all marked palceholders.
+
+
+## Sensor Characterization
+
+TODO: Add datasets, training and testing scripts
+
+## Slip Detection
+
+TODO: Fork and sub-module Enes; add acknowledgement
+
+## Visuo-Tactile Policy Learnig
+
+TODO: Redirect to visk repo
 
 ## References 
 We would like to acknowledge prior works eFlesh draws upon:

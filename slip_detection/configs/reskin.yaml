@@ -1,0 +1,4 @@
+reskin_config:
+  port: "/dev/ttyACM5"
+  num_mags: 10
+  history: 40
