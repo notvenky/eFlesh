@@ -26,7 +26,9 @@ conda env create -f env.yml
 ```
 
 ## Microstructure
-### Microstructure Inflators
+
+TODO: Walk through the dependancies as well
+
 #### This requires some dependancies: [oneTBB](https://github.com/uxlfoundation/oneTBB/blob/master/INSTALL.md) and [BOOST](https://www.boost.org/users/history/version_1_83_0.html)
 ```
 cd eFlesh/microstructure/microstructure_inflators
@@ -55,7 +57,7 @@ TODO: Add datasets, training and testing scripts
 
 ## Slip Detection
 
-TODO: Fork and sub-module Enes; add acknowledgement
+TODO: Add data, checkpoint
 
 ## Visuo-Tactile Policy Learnig
 
