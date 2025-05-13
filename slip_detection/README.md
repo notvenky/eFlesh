@@ -1,3 +1,8 @@
+# Acknowledgement
+
+The slip detection section of this repository is heavily drawn from the [AnySkin handoff demo](https://github.com/NYU-robot-learning/AnySkin-Handoff-Demo).\
+Credits: [Enes Erciyes](https://eneserciyes.github.io/)
+
 # Set up
 
 ```bash
@@ -8,13 +13,6 @@ conda create -n 'slip_detection' python=3.10
 conda activate slip_detection
 python3 -m pip install -r requirements.txt
 ```
-
-```bash
-git clone git@github.com:NYU-robot-learning/reskin_sensor.git
-cd reskin_sensor
-python3 -m pip install -e .
-```
-
 
 # Starting UI
 
@@ -61,7 +59,3 @@ To do the demo:
 
 - Then, you can pull it whenever you want. 
 - NOTE: This demo is very robust. However, the longer object stays in the gripper, the likelier a false positive and gripper will open on its own. I tested up to 30 seconds for many objects and tested this by disturbing the robot.
-
-# Acknowledgement
-
-The slip detection section of this repository is heavily drawn from the [AnySkin handoff demo](https://github.com/NYU-robot-learning/AnySkin-Handoff-Demo). Credits: [Enes Erciyes](https://eneserciyes.github.io/)
