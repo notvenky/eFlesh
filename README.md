@@ -34,7 +34,7 @@ TODO: Walk through the dependancies as well
 cd eFlesh/microstructure/microstructure_inflators
 mkdir build && cd build
 ```
-Please replace the path placeholders below to the correct local paths
+Please replace the path placeholders below to the correct local paths, during the installation. 
 ```
 cmake -DCMAKE_BUILD_TYPE=release .. -DTBB_ROOT=</path/to/oneTBB/installation> -DBoost_NO_SYSTEM_PATHS=ON -DBOOST_ROOT=</path/to/boost_1_83_0>
 ```
@@ -57,11 +57,11 @@ TODO: Add datasets, training and testing scripts
 
 ## Slip Detection
 
-TODO: Add data, checkpoint
+We grasp different objects using the Hello Stretch Robot equipped with eFlesh, and tug at it to collect our dataset. The dataset can be found in ```slip_detection/data```, and the trained classifier is ```slip_detection/checkpoints/eflesh_linear.pkl```.
 
 ## Visuo-Tactile Policy Learnig
 
-TODO: Redirect to visk repo
+We perform four precise manipulation tasks, using the [Visuo-Skin](https://visuoskin.github.io) framework, achieving an average success rate of >90%.
 
 ## References 
 We would like to acknowledge prior works eFlesh draws upon:
