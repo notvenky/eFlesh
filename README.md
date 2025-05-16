@@ -13,7 +13,7 @@
 <!--     <a href=""><img src="https://img.shields.io/static/v1?label=Paper&message=Arxiv&color=red"></a> &ensp;  -->
     <a href="https://github.com/notvenky/eFlesh/blob/main/microstructure/README.md"><img src="https://img.shields.io/static/v1?label=CAD-to-eFlesh&message=Conversion&color=blue"></a> &ensp;
 <!--     <a href=""><img src="https://img.shields.io/static/v1?label=Community&message=Discord&color=violet"></a> &ensp; -->
-    <a href="https://github.com/notvenky/eFlesh/tree/main/characterization/datasets"><img src="https://img.shields.io/static/v1?label=Characterization&message=Datasets&color=violet"></a> &ensp;
+    <a href="https://github.com/notvenky/eFlesh/tree/main/characterization/datasets"><img src="https://img.shields.io/static/v1?label=Characterization&message=Datasets&color=blue"></a> &ensp;
     
 </div>
 
@@ -71,9 +71,10 @@ eFlesh draws upon these prior works:
 2. [Learning Precise, Contact-Rich Manipulation through Uncalibrated Tactile Skins](https://visuoskin.github.io)
 3. [AnySkin: Plug-and-play Skin Sensing for Robotic Touch](https://any-skin.github.io)
 4. [ReSkin: versatile, replaceable, lasting tactile skins](https://reskin.dev)
-
+<!--
 ## Cite 
 If you use eFlesh or its sub-components, please consider citing us as follows:
 ```
 
 ```
+-->
