@@ -27,9 +27,9 @@ conda env create -f env.yml
 
 ## Microstructure
 
-TODO: Walk through the dependancies as well
+To run the cut-cell microstructure optimizers and generate the lattice structures, there are some dependancies to be installed. Please use the following links provided and download [oneTBB](https://github.com/uxlfoundation/oneTBB/blob/master/INSTALL.md) and [BOOST](https://www.boost.org/users/history/version_1_83_0.html) from source. 
 
-#### This requires some dependancies: [oneTBB](https://github.com/uxlfoundation/oneTBB/blob/master/INSTALL.md) and [BOOST](https://www.boost.org/users/history/version_1_83_0.html)
+#### This requires some dependancies: 
 ```
 cd eFlesh/microstructure/microstructure_inflators
 mkdir build && cd build
@@ -53,7 +53,7 @@ In the conversion notebooks ```regular.ipynb``` and ```cut-cell.ipynb```, ensure
 
 ## Sensor Characterization
 
-TODO: Add datasets, training and testing scripts
+We characterize eFlesh's spatial resolution, normal force and shear force prediction accuracy through controlled experiments, The curated datasets can be found in ```characterization/datasets/```. For training, we use a simple two layered MLP with 128 nodes (```python train.py --mode <spatial/normal/shear> --folder /path/to/corresponding/dataset```).
 
 ## Slip Detection
 
@@ -64,7 +64,7 @@ We grasp different objects using the Hello Stretch Robot equipped with eFlesh, a
 We perform four precise manipulation tasks, using the [Visuo-Skin](https://visuoskin.github.io) framework, achieving an average success rate of >90%.
 
 ## References 
-We would like to acknowledge prior works eFlesh draws upon:
+eFlesh draws upon these prior works:
 
 1. [Cut-Cell Microstructures for Two-scale Structural Optimization](https://cims.nyu.edu/gcl/papers/2024-cutcells.pdf)
 2. [Learning Precise, Contact-Rich Manipulation through Uncalibrated Tactile Skins](https://visuoskin.github.io)
