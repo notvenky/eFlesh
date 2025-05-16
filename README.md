@@ -10,9 +10,10 @@
 #####
 <div align="center">
     <a href="https://e-flesh.com"><img src="https://img.shields.io/static/v1?label=Project%20Page&message=Website&color=blue"></a> &ensp;
-    <a href=""><img src="https://img.shields.io/static/v1?label=Paper&message=Arxiv&color=red"></a> &ensp; 
+<!--     <a href=""><img src="https://img.shields.io/static/v1?label=Paper&message=Arxiv&color=red"></a> &ensp;  -->
     <a href="https://github.com/notvenky/eFlesh/blob/main/microstructure/README.md"><img src="https://img.shields.io/static/v1?label=CAD-to-eFlesh&message=Conversion&color=blue"></a> &ensp;
-    <a href=""><img src="https://img.shields.io/static/v1?label=Community&message=Discord&color=violet"></a> &ensp;
+<!--     <a href=""><img src="https://img.shields.io/static/v1?label=Community&message=Discord&color=violet"></a> &ensp; -->
+    <a href="https://github.com/notvenky/eFlesh/tree/main/characterization/datasets"><img src="https://img.shields.io/static/v1?label=Characterization&message=Datasets&color=violet"></a> &ensp;
     
 </div>
 
@@ -29,7 +30,7 @@ conda env create -f env.yml
 
 To run the cut-cell microstructure optimizers and generate the lattice structures, there are some dependancies to be installed. Please use the following links provided and download [oneTBB](https://github.com/uxlfoundation/oneTBB/blob/master/INSTALL.md) and [BOOST](https://www.boost.org/users/history/version_1_83_0.html) from source. 
 
-#### This requires some dependancies: 
+<!--#### This requires some dependancies:-->
 ```
 cd eFlesh/microstructure/microstructure_inflators
 mkdir build && cd build
