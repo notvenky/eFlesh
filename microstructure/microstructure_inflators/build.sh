@@ -17,14 +17,14 @@ echo "Using $JOBS CPU nodes for building."
 echo "Building microstructure_inflators..."
 install_boost() {
     local BOOST_VERSION="1.83.0"
-    local BOOST_DIR="$HOME/Downloads/boost_${BOOST_VERSION//./_}"
+    local BOOST_DIR="$(xdg-user-dir DOWNLOAD)/boost_${BOOST_VERSION//./_}"
     local BOOST_INSTALL_DIR="$HOME/.local/boost_${BOOST_VERSION//./_}"
     
     echo "Setting up Boost $BOOST_VERSION..."
     
     if [ ! -d "$BOOST_DIR" ]; then
         echo "Downloading Boost $BOOST_VERSION..."
-        cd "$HOME/Downloads"
+        cd "$(xdg-user-dir DOWNLOAD)"
         wget "https://sourceforge.net/projects/boost/files/boost/$BOOST_VERSION/boost_${BOOST_VERSION//./_}.tar.gz/download" -O "boost_${BOOST_VERSION//./_}.tar.gz"
         tar -xzf "boost_${BOOST_VERSION//./_}.tar.gz"
         rm "boost_${BOOST_VERSION//./_}.tar.gz"
@@ -129,14 +129,14 @@ install_system_deps() {
 }
 install_tbb() {
     local TBB_VERSION="2021.12.0"
-    local TBB_DIR="$HOME/Downloads/oneTBB-$TBB_VERSION"
+    local TBB_DIR="$(xdg-user-dir DOWNLOAD)/oneTBB-$TBB_VERSION"
     local TBB_INSTALL_DIR="$HOME/.local/tbb_$TBB_VERSION"
     
     echo "Setting up Intel TBB $TBB_VERSION..."
     
     if [ ! -d "$TBB_DIR" ]; then
         echo "Downloading Intel TBB $TBB_VERSION..."
-        cd "$HOME/Downloads"
+        cd "$(xdg-user-dir DOWNLOAD)"
         wget "https://github.com/oneapi-src/oneTBB/archive/refs/tags/v$TBB_VERSION.tar.gz"
         tar -xzf "v$TBB_VERSION.tar.gz"
         rm "v$TBB_VERSION.tar.gz"
