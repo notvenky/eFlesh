@@ -1,9 +1,42 @@
-import bpy
+import bpy # from blender
 import sys
+import os
 import math
 import argparse
-from mathutils import Vector
 
+from mathutils import Vector
+from pathlib import Path
+
+# ============================================================
+# general utilities
+# ============================================================
+def simplify_object(obj, file_path, target_faces=1000000):
+    file_path = Path(file_path)
+    file_dir = file_path.parent
+    file_name = file_path.stem
+
+    simplified_name = f"simplified-{file_name}.obj"
+    bpy.context.view_layer.objects.active = obj
+    bpy.ops.object.mode_set(mode="OBJECT")
+
+    poly_count = len(obj.data.polygons)
+    if poly_count <= target_faces:
+        print(f"No simplification needed ({poly_count} faces).")
+        return
+
+    ratio = target_faces / poly_count
+    print(
+        f"Applying Decimate: {poly_count} → {target_faces} faces (ratio={ratio:.4f})"
+    )
+
+    mod = obj.modifiers.new(name="Decimate", type="DECIMATE")
+    mod.ratio = ratio
+    bpy.ops.object.modifier_apply(modifier=mod.name)
+
+    # export simplified obj
+    bpy.ops.wm.obj_export(filepath=os.path.join(file_dir, simplified_name))
+
+    return
 
 # ============================================================
 # utility Geometry Functions
@@ -164,6 +197,7 @@ def create_magnet_pouch(
 
 
 def add_base_cap(obj_name, thickness, axis="Y"):
+    print(f"adding base cap of {thickness} [mm] to {obj_name}")
     obj = bpy.data.objects[obj_name]
     bbox = [obj.matrix_world @ Vector(c) for c in obj.bound_box]
 
@@ -186,11 +220,11 @@ def add_base_cap(obj_name, thickness, axis="Y"):
     )
 
     boolean(obj_name, cap, "UNION")
-    mod = cap.modifiers.new("Bevel", "BEVEL")
+    #mod = cap.modifiers.new("Bevel", "BEVEL")
 
-    mod.width = 0.5
-    mod.segments = 3
-    bpy.ops.object.modifier_apply(modifier=mod.name)
+    #mod.width = 0.5
+    #mod.segments = 3
+    #bpy.ops.object.modifier_apply(modifier=mod.name)
 
 
 # ============================================================
@@ -206,10 +240,10 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", required=True)
     parser.add_argument("--output", required=True)
-    parser.add_argument("--magnet-diameter", type=float, required=True)
-    parser.add_argument("--magnet-thickness", type=float, required=True)
+    parser.add_argument("--magnet-diameter", type=float, default=9)
+    parser.add_argument("--magnet-thickness", type=float, default=3)
     parser.add_argument("--min-wall", type=float, default=1.0)
-    parser.add_argument("--cap-thickness", type=float, default=0.0)
+    parser.add_argument("--cap-thickness", type=float, default=1.0)
     parser.add_argument("--axis", default="Y")
     parser.add_argument("--tolerance", type=float, default=0.25)
     parser.add_argument(
@@ -223,18 +257,27 @@ def main():
 
     bpy.ops.wm.obj_import(filepath=args.input)
     obj = bpy.context.view_layer.objects.active
+    if obj is None:
+        raise RuntimeError(f"no active obj after import, {args.input}")
     obj.name = "micro"
 
+    simplify_object(obj, args.input)
+
     object_radius, bbox = get_object_radius(obj, args.axis)
+    obj.rotation_euler[0] += math.pi
+    bpy.ops.object.transform_apply(rotation=True)
 
-    center_y = sum(v.y for v in bbox) / 8.0
+    # center_y = sum(v.y for v in bbox) / 8.0
+    center = obj.location
+    center_y = center.y
 
-    n, layout_radius = choose_magnet_count(
-        object_radius,
-        args.magnet_diameter,
-        args.min_wall,
-    )
+    #n, layout_radius = choose_magnet_count(
+    #    object_radius,
+    #    args.magnet_diameter,
+    #    args.min_wall,
+    #)
 
+    n = 0
     print(f"Selected {n} magnets")
 
     if n > 0:
@@ -261,7 +304,12 @@ def main():
     if args.cap_thickness > 0:
         add_base_cap("micro", args.cap_thickness, args.axis)
 
-    bpy.ops.wm.obj_export(filepath=args.output)
+    if args.output.lower().endswith(".stl"):
+        bpy.ops.export_mesh.stl(filepath=args.output)
+    elif args.output.lower().endswith(".obj"):
+        bpy.ops.wm.obj_export(filepath=args.output)
+    else:
+        raise ValueError("Output must be .stl or .obj")
     print("Exported:", args.output)
 
 

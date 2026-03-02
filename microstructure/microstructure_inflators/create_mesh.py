@@ -43,7 +43,8 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", required=True, help="Input STL file")
-    parser.add_argument("--cell-size", type=float, default=2.0)
+    parser.add_argument("--relative-cell-size", type=float, default=0.2)
+    # parser.add_argument("--cell-size", type=float, default=2.0)
     parser.add_argument("--E", type=float, default=0.01)
     parser.add_argument("--nu", type=float, default=0.09)
     parser.add_argument("--only-cube-cells", action="store_true")
@@ -77,9 +78,15 @@ def main():
 
     bbox = np.array([vertices.min(axis=0), vertices.max(axis=0)])
     print("Bounding box:", bbox)
+    extent = bbox[1] - bbox[0]
+    max_dim = np.max(extent)
+    print(f"Max dim: {max_dim}")
 
-    cell_size = args.cell_size
+    # cell_size = args.cell_size
+    cell_size = int(max_dim * args.relative_cell_size)
     corner0, corner1 = compute_grid_corners(bbox, cell_size)
+
+    print(f"cell size: {cell_size}")
 
     dims = corner1 - corner0 + 1
     print("Grid dimensions:", dims)
@@ -152,15 +159,16 @@ def main():
 
     cmd = [
         str(stitch_cli),
-        "-p",
+        "-p", # patch
         str(json_path),
         "--gridSize",
         str(cell_size),
-        "-o",
+        "-o", # output
         str(out_path),
-        "-r",
-        "50",
-    ]
+        "-r", # resolution
+        "30",
+    ] 
+
 
     if not args.only_cube_cells:
         cmd.extend(["--surface", str(obj_path)])

@@ -3,9 +3,66 @@
 Forked from the [eFlesh](https://github.com/notvenky/eFlesh) repo, this is a trimmed down version for the OMAV platform.
 #####
 
-## getting started
+## prerequisites
 
-LATER @luceharris will make a docker on crazy that you can use for making the thimble
+### to design/buy before you start
+- design the STL/OBJ file of your desired shape for the sensor. Other designs are on [FILL IN LATER]
+- get [N52 neodymium magnets](https://www.supermagnete.ch/scheibenmagnete-neodym/scheibenmagnet-9mm-3mm_S-09-03-N52N?group=lp-n52) N52 Ø9 mm, height 3 mm. This size is the best for SNR and provide a strong magnetism. 
+- arduino [Adafruit QT py](https://www.berrybase.ch/adafruit-qt-py-samd21-dev-board-stemma-qt) with STEMMA QT connectors and some [Qwiic cables](https://www.berrybase.ch/sparkfun-qwiic-kabel-kit), how to setup the [adafruit](https://learn.adafruit.com/adafruit-qt-py)
+- the [magnometer PCB board](https://shop.wowrobo.com/products/eflesh-magnetometer-board)
+- a compass
+
+### software
+- bambu studio (the [ubuntu version](https://github.com/bambulab/BambuStudio/releaseshttps://bambulab.com/en/download/studio))
+- [arduino ide](https://learn.adafruit.com/adafruit-arduino-ide-setup/linux-setup) for flashing the Adafruit (the newer versions of arduino failed, this one is old but good)
+- [blender](https://www.blender.org/download/) to modify the mesh after generation
+
+
+## getting started on crazy
+
+log into `crazyinsight` 
+```console
+ssh omav4@crazyinsight.asl.ethz.ch
+```
+pw -> ask @luceharris or @michaelpantic
+
+design the STL/OBJ file of your desired shape for the sensor. Other designs are on in `/home/omav4/thimble/`. Make sure to `scp` your design over to crazy, and put in the `thimble/` directory
+
+now activate the docker
+```console
+docker run -it --rm -v ~/thimble:/workspace -w /workspace/omav_thimble_utils thimble-dev
+```
+
+now you are inside the docker workspace
+
+### creating the mesh
+the mesh is created using the eFlesh repository, which is already built. 
+
+```console
+cd /workspace/omav_thimble_utils/microstructure/microstructure_inflators
+python create_mesh.py --input <path/to/your/design>
+```
+
+this could take some time, and will automatically generate the mesh size based on the overall size of the object. 
+look at the folder /workspace/thimble/ to see the new generated `.obj` file. This name you will need next.
+
+e.g. `panda_ee_0.01.3.obj`
+
+### adding magnet pouches and cap
+
+
+now we will use blender to add the pouches and cap:
+
+```
+cd /workspace/omav_thimble_utils/scripts/
+blender -b -P generate_thimble.py -- --input <path/to/new.obj> --output <path/to/final.stl>
+```
+this should generate the cap and the magnet pouches again based on the size. #TODO @luceharris pouches currently not generating
+
+
+## getting started - local
+
+clone the repo
 
 ```
 git clone --recurse-submodules git@github.com:ethz-asl/omav_thimble_utils.git
@@ -24,20 +81,6 @@ python -m venv /path/to/venv/thimble
 source /path/to/thimble/bin/activate
 pip install numpy scipy reskin-sensor matplotlib meshio tqdm libigl
 ```
-
-## prerequisites
-
-### to design/buy before you start
-- design the STL/OBJ file of your desired shape for the sensor. Other designs are on [FILL IN LATER]
-- get [N52 neodymium magnets](https://www.supermagnete.ch/scheibenmagnete-neodym/scheibenmagnet-9mm-3mm_S-09-03-N52N?group=lp-n52) N52 Ø9 mm, height 3 mm. This size is the best for SNR and provide a strong magnetism. 
-- arduino [Adafruit QT py](https://www.berrybase.ch/adafruit-qt-py-samd21-dev-board-stemma-qt) with STEMMA QT connectors and some [Qwiic cables](https://www.berrybase.ch/sparkfun-qwiic-kabel-kit), how to setup the [adafruit](https://learn.adafruit.com/adafruit-qt-py)
-- the [magnometer PCB board](https://shop.wowrobo.com/products/eflesh-magnetometer-board)
-- a compass
-
-### software
-- bambu studio (the [ubuntu version](https://github.com/bambulab/BambuStudio/releaseshttps://bambulab.com/en/download/studio))
-- [arduino ide](https://learn.adafruit.com/adafruit-arduino-ide-setup/linux-setup) for flashing the Adafruit (the newer versions of arduino failed, this one is old but good)
-- [blender](https://www.blender.org/download/) to modify the mesh after generation
 
 ## mesh generation
 
