@@ -129,18 +129,21 @@ def get_object_radius(obj, axis="Y"):
 
 
 def choose_magnet_count(
-    object_radius, magnet_diameter, min_wall, min_clearance=0.5
+    object_radius, magnet_diameter, min_wall, min_clearance=0.5, pouch_wall=1.0
 ):
     magnet_radius = magnet_diameter / 2.0
-    available_radius = object_radius - magnet_radius - min_wall
+    # pouch center must be inset by magnet_radius + shell wall + min_wall
+    available_radius = object_radius - magnet_radius - pouch_wall - min_wall
 
     if available_radius <= 0:
         return 0, 0
 
+    # actual footprint of each pouch (magnet + shell on each side)
+    pouch_diameter = magnet_diameter + 2 * pouch_wall
+
     for n in [4, 3, 2]:
         spacing = 2 * available_radius * math.sin(math.pi / n)
-
-        if spacing > magnet_diameter + min_clearance:
+        if spacing > pouch_diameter + min_clearance:
             return n, available_radius
 
     return 1, available_radius
@@ -160,6 +163,36 @@ def circular_layout(radius, count, center, axis="Y"):
             centers.append([x, z, center[2]])
         elif axis == "X":
             centers.append([center[0], x, z])
+
+    return centers
+
+
+def stacked_layout(object_radius, axis_min, axis_max, magnet_diameter, magnet_thickness,
+                   min_wall, min_clearance=1.0, pouch_wall=1.0, axis="Y"):
+    """Single column of magnets stacked along the axis at maximum radial offset."""
+    radial_offset = object_radius - magnet_diameter / 2.0 - pouch_wall - min_wall
+
+    if radial_offset <= 0:
+        print("Warning: object too small for stacked layout")
+        return []
+
+    step = magnet_thickness + min_clearance
+    axis_length = axis_max - axis_min
+    n = max(1, int(axis_length / step))
+
+    # centre the stack along the axis
+    axis_center = (axis_min + axis_max) / 2.0
+    start = axis_center - (n - 1) * step / 2.0
+
+    centers = []
+    for i in range(n):
+        a = start + i * step
+        if axis == "Y":
+            centers.append([radial_offset, a, 0])
+        elif axis == "Z":
+            centers.append([radial_offset, 0, a])
+        elif axis == "X":
+            centers.append([0, radial_offset, a])
 
     return centers
 
@@ -263,6 +296,7 @@ def main():
     parser.add_argument("--tolerance", type=float, default=None)
     parser.add_argument("--fit-mode", default=None, choices=["press", "slip"])
     parser.add_argument("--no-pouches", action="store_true", help="Skip magnet pouch generation")
+    parser.add_argument("--layout", default=None, choices=["circular", "stacked"])
 
     args = parser.parse_args(argv)
 
@@ -278,6 +312,7 @@ def main():
     fit_mode         = args.fit_mode         or magnet_cfg.get("fit_mode",  "press")
     cap_thickness    = args.cap_thickness    or sensor_cfg.get("cap_thickness", 1.0)
     axis             = args.axis             or sensor_cfg.get("axis", "Y")
+    layout           = args.layout           or magnet_cfg.get("layout", "circular")
 
     bpy.ops.object.select_all(action="SELECT")
     bpy.ops.object.delete()
@@ -298,34 +333,38 @@ def main():
     center_y = center.y
 
     if not args.no_pouches:
-        n, layout_radius = choose_magnet_count(
-            object_radius,
-            magnet_diameter,
-            min_wall,
-        )
-        print(f"Selected {n} magnets")
-
-        if n > 0:
-            centers = circular_layout(
-                layout_radius,
-                n,
-                [0, center_y, 0],
-                axis,
+        if layout == "stacked":
+            axis_vals = {"Y": (min(v.y for v in bbox), max(v.y for v in bbox)),
+                         "Z": (min(v.z for v in bbox), max(v.z for v in bbox)),
+                         "X": (min(v.x for v in bbox), max(v.x for v in bbox))}
+            axis_min, axis_max = axis_vals[axis]
+            centers = stacked_layout(
+                object_radius, axis_min, axis_max,
+                magnet_diameter, magnet_thickness,
+                min_wall, axis=axis,
             )
+            print(f"Stacked layout: {len(centers)} magnets")
+        else:
+            n, layout_radius = choose_magnet_count(
+                object_radius,
+                magnet_diameter,
+                min_wall,
+            )
+            print(f"Circular layout: {n} magnets")
+            centers = circular_layout(layout_radius, n, [0, center_y, 0], axis) if n > 0 else []
 
-            for i, c in enumerate(centers):
-                cavity, shell, chamfer = create_magnet_pouch(
-                    f"magnet{i}",
-                    magnet_diameter,
-                    magnet_thickness,
-                    c,
-                    axis,
-                    tolerance,
-                )
-
-                boolean("micro", cavity, "DIFFERENCE")
-                boolean("micro", chamfer, "DIFFERENCE")
-                boolean("micro", shell, "UNION")
+        for i, c in enumerate(centers):
+            cavity, shell, chamfer = create_magnet_pouch(
+                f"magnet{i}",
+                magnet_diameter,
+                magnet_thickness,
+                c,
+                axis,
+                tolerance,
+            )
+            boolean("micro", cavity, "DIFFERENCE")
+            boolean("micro", chamfer, "DIFFERENCE")
+            boolean("micro", shell, "UNION")
     else:
         print("Skipping magnet pouches (--no-pouches)")
 
