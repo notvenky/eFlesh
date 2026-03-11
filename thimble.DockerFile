@@ -35,7 +35,9 @@ RUN pip3 install --break-system-packages \
     scipy \
     matplotlib \
     meshio \
-    tqdm 
+    tqdm \
+    pyyaml
+
 
 WORKDIR /workspace
 
