@@ -1,0 +1,19 @@
+# Thimble sensor configuration
+# All values can be overridden by CLI flags on individual scripts.
+
+mesh:
+  relative_cell_size: 0.2   # cell size as fraction of max dimension
+  E: 0.01                   # Young's modulus
+  nu: 0.09                  # Poisson's ratio
+
+sensor:
+  axis: "Y"                 # insertion/up axis: "X", "Y", or "Z"
+  cap_thickness: 1.0        # mm — base cap thickness; 0 to disable
+
+magnet:
+  diameter: 9.0             # mm — N52 Ø9mm disc
+  thickness: 3.0            # mm — N52 3mm height
+  tolerance: 0.25           # mm — press-fit tolerance
+  fit_mode: "press"         # "press" or "slip"
+  min_wall: 1.0             # mm — min wall between pouch and mesh surface
+  layout: "circular"        # "circular" | "stacked" (stacked: future)

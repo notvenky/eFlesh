@@ -7,6 +7,20 @@ import argparse
 from mathutils import Vector
 from pathlib import Path
 
+try:
+    import yaml
+    _YAML_AVAILABLE = True
+except ImportError:
+    _YAML_AVAILABLE = False
+
+
+def load_config(config_path):
+    if not _YAML_AVAILABLE:
+        print("Warning: PyYAML not installed — ignoring --config")
+        return {}
+    with open(config_path) as f:
+        return yaml.safe_load(f) or {}
+
 # ============================================================
 # general utilities
 # ============================================================
@@ -240,17 +254,30 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", required=True)
     parser.add_argument("--output", required=True)
-    parser.add_argument("--magnet-diameter", type=float, default=9)
-    parser.add_argument("--magnet-thickness", type=float, default=3)
-    parser.add_argument("--min-wall", type=float, default=1.0)
-    parser.add_argument("--cap-thickness", type=float, default=1.0)
-    parser.add_argument("--axis", default="Y")
-    parser.add_argument("--tolerance", type=float, default=0.25)
-    parser.add_argument(
-        "--fit-mode", default="press", choices=["press", "slip"]
-    )
+    parser.add_argument("--config", default=None, help="Path to thimble_config.yaml")
+    parser.add_argument("--magnet-diameter", type=float, default=None)
+    parser.add_argument("--magnet-thickness", type=float, default=None)
+    parser.add_argument("--min-wall", type=float, default=None)
+    parser.add_argument("--cap-thickness", type=float, default=None)
+    parser.add_argument("--axis", default=None)
+    parser.add_argument("--tolerance", type=float, default=None)
+    parser.add_argument("--fit-mode", default=None, choices=["press", "slip"])
+    parser.add_argument("--no-pouches", action="store_true", help="Skip magnet pouch generation")
 
     args = parser.parse_args(argv)
+
+    # load config file defaults, then apply CLI overrides
+    cfg = load_config(args.config) if args.config else {}
+    magnet_cfg = cfg.get("magnet", {})
+    sensor_cfg = cfg.get("sensor", {})
+
+    magnet_diameter  = args.magnet_diameter  or magnet_cfg.get("diameter",  9.0)
+    magnet_thickness = args.magnet_thickness or magnet_cfg.get("thickness", 3.0)
+    min_wall         = args.min_wall         or magnet_cfg.get("min_wall",  1.0)
+    tolerance        = args.tolerance        or magnet_cfg.get("tolerance", 0.25)
+    fit_mode         = args.fit_mode         or magnet_cfg.get("fit_mode",  "press")
+    cap_thickness    = args.cap_thickness    or sensor_cfg.get("cap_thickness", 1.0)
+    axis             = args.axis             or sensor_cfg.get("axis", "Y")
 
     bpy.ops.object.select_all(action="SELECT")
     bpy.ops.object.delete()
@@ -263,46 +290,47 @@ def main():
 
     simplify_object(obj, args.input)
 
-    object_radius, bbox = get_object_radius(obj, args.axis)
+    object_radius, bbox = get_object_radius(obj, axis)
     obj.rotation_euler[0] += math.pi
     bpy.ops.object.transform_apply(rotation=True)
 
-    # center_y = sum(v.y for v in bbox) / 8.0
     center = obj.location
     center_y = center.y
 
-    #n, layout_radius = choose_magnet_count(
-    #    object_radius,
-    #    args.magnet_diameter,
-    #    args.min_wall,
-    #)
-
-    n = 0
-    print(f"Selected {n} magnets")
-
-    if n > 0:
-        centers = circular_layout(
-            layout_radius,
-            n,
-            [0, center_y, 0],
-            args.axis,
+    if not args.no_pouches:
+        n, layout_radius = choose_magnet_count(
+            object_radius,
+            magnet_diameter,
+            min_wall,
         )
+        print(f"Selected {n} magnets")
 
-        for i, c in enumerate(centers):
-            cavity, shell, chamfer = create_magnet_pouch(
-                f"magnet{i}",
-                args.magnet_diameter,
-                args.magnet_thickness,
-                c,
-                args.axis,
+        if n > 0:
+            centers = circular_layout(
+                layout_radius,
+                n,
+                [0, center_y, 0],
+                axis,
             )
 
-            boolean("micro", cavity, "DIFFERENCE")
-            boolean("micro", chamfer, "DIFFERENCE")
-            boolean("micro", shell, "UNION")
+            for i, c in enumerate(centers):
+                cavity, shell, chamfer = create_magnet_pouch(
+                    f"magnet{i}",
+                    magnet_diameter,
+                    magnet_thickness,
+                    c,
+                    axis,
+                    tolerance,
+                )
 
-    if args.cap_thickness > 0:
-        add_base_cap("micro", args.cap_thickness, args.axis)
+                boolean("micro", cavity, "DIFFERENCE")
+                boolean("micro", chamfer, "DIFFERENCE")
+                boolean("micro", shell, "UNION")
+    else:
+        print("Skipping magnet pouches (--no-pouches)")
+
+    if cap_thickness > 0:
+        add_base_cap("micro", cap_thickness, axis)
 
     if args.output.lower().endswith(".stl"):
         bpy.ops.export_mesh.stl(filepath=args.output)

@@ -10,6 +10,20 @@ import subprocess
 import meshio
 import numpy as np
 
+try:
+    import yaml
+    _YAML_AVAILABLE = True
+except ImportError:
+    _YAML_AVAILABLE = False
+
+
+def load_config(config_path):
+    if not _YAML_AVAILABLE:
+        print("Warning: PyYAML not installed — ignoring --config")
+        return {}
+    with open(config_path) as f:
+        return yaml.safe_load(f) or {}
+
 """
 Taken from EFlesh paper
 Author Lucy Harris
@@ -43,15 +57,27 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", required=True, help="Input STL file")
-    parser.add_argument("--relative-cell-size", type=float, default=0.2)
-    # parser.add_argument("--cell-size", type=float, default=2.0)
-    parser.add_argument("--E", type=float, default=0.01)
-    parser.add_argument("--nu", type=float, default=0.09)
+    parser.add_argument("--config", default=None, help="Path to thimble_config.yaml")
+    parser.add_argument("--relative-cell-size", type=float, default=None)
+    parser.add_argument("--E", type=float, default=None)
+    parser.add_argument("--nu", type=float, default=None)
     parser.add_argument("--only-cube-cells", action="store_true")
     parser.add_argument("--microstructure-repo", default="./")
     parser.add_argument("--matopt-repo", default="../matopt")
 
     args = parser.parse_args()
+
+    cfg = load_config(args.config) if args.config else {}
+    mesh_cfg = cfg.get("mesh", {})
+
+    relative_cell_size = args.relative_cell_size or mesh_cfg.get("relative_cell_size", 0.2)
+    E  = args.E  or mesh_cfg.get("E",  0.01)
+    nu = args.nu or mesh_cfg.get("nu", 0.09)
+
+    # reassign onto args-like namespace for the rest of the script
+    args.relative_cell_size = relative_cell_size
+    args.E  = E
+    args.nu = nu
 
     input_path = Path(args.input).resolve()
     micro_repo = Path(args.microstructure_repo).resolve()

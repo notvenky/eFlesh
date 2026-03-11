@@ -20,44 +20,52 @@ Forked from the [eFlesh](https://github.com/notvenky/eFlesh) repo, this is a tri
 
 ## getting started on crazy
 
-log into `crazyinsight` 
+log into `crazyinsight`
 ```console
 ssh omav4@crazyinsight.asl.ethz.ch
 ```
 pw -> ask @luceharris or @michaelpantic
 
-design the STL/OBJ file of your desired shape for the sensor. Other designs are on in `/home/omav4/thimble/`. Make sure to `scp` your design over to crazy, and put in the `thimble/` directory
+design the STL/OBJ file of your desired shape for the sensor. Other designs are in `/home/omav4/thimble/`. `scp` your design over to crazy and put it in the `thimble/` directory.
 
 now activate the docker
 ```console
-docker run -it --rm -v ~/thimble:/workspace -w /workspace/omav_thimble_utils thimble-dev
+docker run -it --rm -v ~/thimble:/workspace -w /workspace thimble-dev
 ```
 
-now you are inside the docker workspace
-
-### creating the mesh
-the mesh is created using the eFlesh repository, which is already built. 
+now you are inside the docker workspace. Run the full pipeline with one command:
 
 ```console
-cd /workspace/omav_thimble_utils/microstructure/microstructure_inflators
-python create_mesh.py --input <path/to/your/design>
+./omav_thimble_utils/run_pipeline.sh <path/to/your/design.stl> <path/to/output.stl>
 ```
 
-this could take some time, and will automatically generate the mesh size based on the overall size of the object. 
-look at the folder /workspace/thimble/ to see the new generated `.obj` file. This name you will need next.
-
-e.g. `panda_ee_0.01.3.obj`
-
-### adding magnet pouches and cap
-
-
-now we will use blender to add the pouches and cap:
-
+e.g.
+```console
+./omav_thimble_utils/run_pipeline.sh designs/panda_ee.stl output/panda_thimble.stl
 ```
-cd /workspace/omav_thimble_utils/scripts/
-blender -b -P generate_thimble.py -- --input <path/to/new.obj> --output <path/to/final.stl>
+
+This will generate the microstructure mesh and add the magnet pouches and base cap automatically. Sensor parameters (magnet size, axis, cap thickness, etc.) are configured in [`cfg/thimble_config.yaml`](cfg/thimble_config.yaml).
+
+To override a parameter for a single run, pass it as a flag to the individual scripts — see `--help` on each.
+
+### manual steps (advanced)
+
+If you need to run the two steps separately:
+
+**Step 1 — mesh generation:**
+```console
+cd omav_thimble_utils/microstructure/microstructure_inflators
+python create_mesh.py --input <path/to/your/design.stl> --config ../../cfg/thimble_config.yaml
 ```
-this should generate the cap and the magnet pouches again based on the size. #TODO @luceharris pouches currently not generating
+This produces e.g. `panda_ee_0.01.3.obj` next to the input file.
+
+**Step 2 — add caps and pouches:**
+```console
+blender -b -P omav_thimble_utils/scripts/generate_thimble.py -- \
+    --input <path/to/mesh.obj> \
+    --output <path/to/final.stl> \
+    --config omav_thimble_utils/cfg/thimble_config.yaml
+```
 
 
 ## getting started - local
@@ -82,7 +90,7 @@ source /path/to/thimble/bin/activate
 pip install numpy scipy reskin-sensor matplotlib meshio tqdm libigl
 ```
 
-## mesh generation
+## building the mesh binary (local only — not needed in Docker)
 
 system pre-requisites
 ```
@@ -92,20 +100,6 @@ sudo apt-get update && sudo apt-get install -y build-essential cmake libgmp-dev 
 ```
 cd microstructure/microstructure_inflators && chmod +x build.sh && ./build.sh
 ```
-
-You're now all set to use [`cut-cell.ipynb`](microstruture/microstructure_inflators/notebooks/cut-cell.ipynb) to make your own thimble sensor, point the notebook to your OBJ/STL fle.
-
-## adding pouches and other parts to the sensor
-
-now you should have a mesh STL/OBJ file generated, and we need to add pouches for the magnets. 
-
-there are some pre-made [scripts for the pouches](scripts/create_pouches.py)
-```
-source /path/to/venv/thimble
-/path/to/your/blender -bP scripts/create_pouches.py
-```
-
-you can change the magnet size, pouch location, and add other features such as [caps](scripts/create_caps.py) here. [STILL WIP]
 
 ## sensor fabrication with 3D printer
 
