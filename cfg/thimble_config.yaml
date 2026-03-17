@@ -16,4 +16,10 @@ magnet:
   tolerance: 0.25           # mm — press-fit tolerance
   fit_mode: "press"         # "press" or "slip"
   min_wall: 1.0             # mm — min wall between pouch and mesh surface
-  layout: "circular"        # "circular" | "stacked" (stacked: future)
+  layout: "circular"        # "circular" | "stacked" | "rings"
+
+  # rings layout — only used when layout: "rings"
+  rings:
+    n_rings: 2              # number of rings along the axis
+    ring_spacing: null      # mm between rings; null = auto (60% of axis length / (n_rings-1))
+    ring_rotation_offset: 45.0  # degrees of rotation between successive rings

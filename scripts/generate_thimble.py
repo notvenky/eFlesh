@@ -3,7 +3,9 @@ import sys
 import os
 import math
 import argparse
+import json
 
+from datetime import datetime
 from mathutils import Vector
 from pathlib import Path
 
@@ -200,6 +202,61 @@ def stacked_layout(object_radius, axis_min, axis_max, magnet_diameter, magnet_th
     return centers
 
 
+def rings_layout(object_radius, axis_min, axis_max, magnet_diameter, magnet_thickness,
+                 min_wall, n_rings=2, ring_spacing=None, ring_rotation_offset=45.0,
+                 min_clearance=0.5, pouch_wall=1.0, axis="Y"):
+    """Multiple circular rings of magnets at evenly-spaced heights along the axis.
+
+    Rings are optionally rotated relative to each other (ring_rotation_offset degrees),
+    which improves spatial coverage of the magnetic field and gives a richer signal.
+
+    Returns (centers, meta) where meta records the resolved layout parameters for the manifest.
+    """
+    n_per_ring, layout_radius = choose_magnet_count(
+        object_radius, magnet_diameter, min_wall, min_clearance, pouch_wall
+    )
+    if n_per_ring == 0:
+        return [], {}
+
+    axis_length = axis_max - axis_min
+    axis_center = (axis_min + axis_max) / 2.0
+
+    if ring_spacing is None:
+        if n_rings == 1:
+            ring_spacing = 0.0
+        else:
+            # spread rings over 60% of the available axis length
+            ring_spacing = (axis_length * 0.6) / (n_rings - 1)
+
+    total_span = ring_spacing * (n_rings - 1)
+    ring_start = axis_center - total_span / 2.0
+
+    all_centers = []
+    for ring_idx in range(n_rings):
+        axis_pos = ring_start + ring_idx * ring_spacing
+        angle_offset = math.radians(ring_rotation_offset * ring_idx)
+        for i in range(n_per_ring):
+            angle = 2 * math.pi * i / n_per_ring + angle_offset
+            r_cos = layout_radius * math.cos(angle)
+            r_sin = layout_radius * math.sin(angle)
+            if axis == "Y":
+                all_centers.append([r_cos, axis_pos, r_sin])
+            elif axis == "Z":
+                all_centers.append([r_cos, r_sin, axis_pos])
+            elif axis == "X":
+                all_centers.append([axis_pos, r_cos, r_sin])
+
+    meta = {
+        "n_rings": n_rings,
+        "n_per_ring": n_per_ring,
+        "ring_spacing_mm": round(ring_spacing, 3),
+        "ring_rotation_offset_deg": ring_rotation_offset,
+        "layout_radius_mm": round(layout_radius, 3),
+        "total_magnets": n_rings * n_per_ring,
+    }
+    return all_centers, meta
+
+
 # ============================================================
 # magnet pouch generator
 # ============================================================
@@ -299,7 +356,12 @@ def main():
     parser.add_argument("--tolerance", type=float, default=None)
     parser.add_argument("--fit-mode", default=None, choices=["press", "slip"])
     parser.add_argument("--no-pouches", action="store_true", help="Skip magnet pouch generation")
-    parser.add_argument("--layout", default=None, choices=["circular", "stacked"])
+    parser.add_argument("--layout", default=None, choices=["circular", "stacked", "rings"])
+    parser.add_argument("--n-rings", type=int, default=None, help="Number of rings (rings layout)")
+    parser.add_argument("--ring-spacing", type=float, default=None, help="mm between rings; auto if omitted")
+    parser.add_argument("--ring-rotation-offset", type=float, default=None, help="degrees of rotation between rings (default 45)")
+    parser.add_argument("--print-id", default=None, help="Short identifier for this print variant (used in manifest)")
+    parser.add_argument("--notes", default=None, help="Free-text notes recorded in the manifest")
 
     args = parser.parse_args(argv)
 
@@ -316,6 +378,11 @@ def main():
     cap_thickness    = args.cap_thickness    or sensor_cfg.get("cap_thickness", 1.0)
     axis             = args.axis             or sensor_cfg.get("axis", "Y")
     layout           = args.layout           or magnet_cfg.get("layout", "circular")
+
+    rings_cfg = magnet_cfg.get("rings", {})
+    n_rings               = args.n_rings               or rings_cfg.get("n_rings", 2)
+    ring_spacing          = args.ring_spacing          or rings_cfg.get("ring_spacing", None)
+    ring_rotation_offset  = args.ring_rotation_offset  or rings_cfg.get("ring_rotation_offset", 45.0)
 
     bpy.ops.object.select_all(action="SELECT")
     bpy.ops.object.delete()
@@ -335,18 +402,32 @@ def main():
     center = obj.location
     center_y = center.y
 
+    layout_meta = {}  # extra resolved params written to manifest
+
     if not args.no_pouches:
+        axis_vals = {"Y": (min(v.y for v in bbox), max(v.y for v in bbox)),
+                     "Z": (min(v.z for v in bbox), max(v.z for v in bbox)),
+                     "X": (min(v.x for v in bbox), max(v.x for v in bbox))}
+        axis_min, axis_max = axis_vals[axis]
+
         if layout == "stacked":
-            axis_vals = {"Y": (min(v.y for v in bbox), max(v.y for v in bbox)),
-                         "Z": (min(v.z for v in bbox), max(v.z for v in bbox)),
-                         "X": (min(v.x for v in bbox), max(v.x for v in bbox))}
-            axis_min, axis_max = axis_vals[axis]
             centers = stacked_layout(
                 object_radius, axis_min, axis_max,
                 magnet_diameter, magnet_thickness,
                 min_wall, axis=axis,
             )
             print(f"Stacked layout: {len(centers)} magnets")
+        elif layout == "rings":
+            centers, layout_meta = rings_layout(
+                object_radius, axis_min, axis_max,
+                magnet_diameter, magnet_thickness,
+                min_wall, n_rings=n_rings, ring_spacing=ring_spacing,
+                ring_rotation_offset=ring_rotation_offset, axis=axis,
+            )
+            print(f"Rings layout: {layout_meta.get('n_rings')}x{layout_meta.get('n_per_ring')} "
+                  f"= {layout_meta.get('total_magnets')} magnets, "
+                  f"spacing={layout_meta.get('ring_spacing_mm')} mm, "
+                  f"rotation offset={layout_meta.get('ring_rotation_offset_deg')}°")
         else:
             n, layout_radius = choose_magnet_count(
                 object_radius,
@@ -355,6 +436,7 @@ def main():
             )
             print(f"Circular layout: {n} magnets")
             centers = circular_layout(layout_radius, n, [0, center_y, 0], axis) if n > 0 else []
+            layout_meta = {"n_magnets": n, "layout_radius_mm": round(layout_radius, 3)} if n > 0 else {}
 
         for i, c in enumerate(centers):
             cavity, shell, chamfer = create_magnet_pouch(
@@ -381,6 +463,33 @@ def main():
     else:
         raise ValueError("Output must be .stl or .obj")
     print("Exported:", args.output)
+
+    # --- write manifest ---
+    manifest = {
+        "print_id": args.print_id or Path(args.output).stem,
+        "notes": args.notes or "",
+        "generated_at": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "input": args.input,
+        "output": args.output,
+        "config_file": args.config or "(none)",
+        "sensor": {
+            "axis": axis,
+            "cap_thickness_mm": cap_thickness,
+        },
+        "magnet": {
+            "diameter_mm": magnet_diameter,
+            "thickness_mm": magnet_thickness,
+            "tolerance_mm": tolerance,
+            "fit_mode": fit_mode,
+            "min_wall_mm": min_wall,
+            "layout": layout if not args.no_pouches else "none",
+            **layout_meta,
+        },
+    }
+    manifest_path = str(Path(args.output).with_suffix(".manifest.json"))
+    with open(manifest_path, "w") as f:
+        json.dump(manifest, f, indent=2)
+    print("Manifest:  ", manifest_path)
 
 
 if __name__ == "__main__":
