@@ -146,7 +146,10 @@ def choose_magnet_count(
         if spacing > pouch_diameter + min_clearance:
             return n, available_radius
 
-    return 1, available_radius
+    print(f"Warning: object too small to fit 2 non-overlapping pouches "
+          f"(object_radius={object_radius:.1f}, pouch_diameter={pouch_diameter:.1f}). "
+          f"Use --no-pouches or a larger design.")
+    return 0, 0
 
 
 def circular_layout(radius, count, center, axis="Y"):
