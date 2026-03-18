@@ -131,7 +131,8 @@ def get_object_radius(obj, axis="Y"):
 
 
 def choose_magnet_count(
-    object_radius, magnet_diameter, min_wall, min_clearance=0.5, pouch_wall=1.0
+    object_radius, magnet_diameter, min_wall, min_clearance=0.5, pouch_wall=1.0,
+    max_count=4
 ):
     magnet_radius = magnet_diameter / 2.0
     # pouch center must be inset by magnet_radius + shell wall + min_wall
@@ -144,6 +145,8 @@ def choose_magnet_count(
     pouch_diameter = magnet_diameter + 2 * pouch_wall
 
     for n in [4, 3, 2]:
+        if n > max_count:
+            continue
         spacing = 2 * available_radius * math.sin(math.pi / n)
         if spacing > pouch_diameter + min_clearance:
             return n, available_radius
@@ -204,16 +207,19 @@ def stacked_layout(object_radius, axis_min, axis_max, magnet_diameter, magnet_th
 
 def rings_layout(object_radius, axis_min, axis_max, magnet_diameter, magnet_thickness,
                  min_wall, n_rings=2, ring_spacing=None, ring_rotation_offset=45.0,
-                 min_clearance=0.5, pouch_wall=1.0, axis="Y"):
-    """Multiple circular rings of magnets at evenly-spaced heights along the axis.
-
-    Rings are optionally rotated relative to each other (ring_rotation_offset degrees),
+                 min_clearance=0.5, pouch_wall=1.0, axis="Y", max_magnets=4):
+    """
+    Multiple circular rings of magnets at evenly-spaced heights along the axis.
+    Rings are rotated relative to each other (ring_rotation_offset degrees),
     which improves spatial coverage of the magnetic field and gives a richer signal.
-
+    :param max_magnets caps the total number of magnets placed across all rings.
+    :param
     Returns (centers, meta) where meta records the resolved layout parameters for the manifest.
     """
+    max_per_ring = max(1, max_magnets // n_rings)
     n_per_ring, layout_radius = choose_magnet_count(
-        object_radius, magnet_diameter, min_wall, min_clearance, pouch_wall
+        object_radius, magnet_diameter, min_wall, min_clearance, pouch_wall,
+        max_count=max_per_ring
     )
     if n_per_ring == 0:
         return [], {}
@@ -360,6 +366,7 @@ def main():
     parser.add_argument("--n-rings", type=int, default=None, help="Number of rings (rings layout)")
     parser.add_argument("--ring-spacing", type=float, default=None, help="mm between rings; auto if omitted")
     parser.add_argument("--ring-rotation-offset", type=float, default=None, help="degrees of rotation between rings (default 45)")
+    parser.add_argument("--max-magnets", type=int, default=None, help="Maximum total number of magnets (default 4)")
     parser.add_argument("--print-id", default=None, help="Short identifier for this print variant (used in manifest)")
     parser.add_argument("--notes", default=None, help="Free-text notes recorded in the manifest")
 
@@ -383,6 +390,7 @@ def main():
     n_rings               = args.n_rings               or rings_cfg.get("n_rings", 2)
     ring_spacing          = args.ring_spacing          or rings_cfg.get("ring_spacing", None)
     ring_rotation_offset  = args.ring_rotation_offset  or rings_cfg.get("ring_rotation_offset", 45.0)
+    max_magnets           = args.max_magnets           or magnet_cfg.get("max_magnets", 4)
 
     bpy.ops.object.select_all(action="SELECT")
     bpy.ops.object.delete()
@@ -423,6 +431,7 @@ def main():
                 magnet_diameter, magnet_thickness,
                 min_wall, n_rings=n_rings, ring_spacing=ring_spacing,
                 ring_rotation_offset=ring_rotation_offset, axis=axis,
+                max_magnets=max_magnets,
             )
             print(f"Rings layout: {layout_meta.get('n_rings')}x{layout_meta.get('n_per_ring')} "
                   f"= {layout_meta.get('total_magnets')} magnets, "
@@ -433,6 +442,7 @@ def main():
                 object_radius,
                 magnet_diameter,
                 min_wall,
+                max_count=max_magnets,
             )
             print(f"Circular layout: {n} magnets")
             centers = circular_layout(layout_radius, n, [0, center_y, 0], axis) if n > 0 else []
