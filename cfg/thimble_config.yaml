@@ -2,24 +2,24 @@
 # All values can be overridden by CLI flags on individual scripts.
 
 mesh:
-  relative_cell_size: 0.2   # cell size as fraction of max dimension
+  relative_cell_size: 0.12   # cell size as fraction of max dimension
   E: 0.01                   # Young's modulus
   nu: 0.09                  # Poisson's ratio
 
 sensor:
   axis: "Y"                 # insertion/up axis: "X", "Y", or "Z"
-  cap_thickness: 1.0        # mm — base cap thickness; 0 to disable
+  cap_thickness: 1.0        # mm - base cap thickness; 0 to disable
 
 magnet:
-  diameter: 9.0             # mm — N52 Ø9mm disc
-  thickness: 3.0            # mm — N52 3mm height
-  tolerance: 0.25           # mm — press-fit tolerance
+  diameter: 9.0             # mm - N52 mm disc
+  thickness: 3.0            # mm - N52 mm height
+  tolerance: 0.25           # mm - press-fit tolerance
   fit_mode: "press"         # "press" or "slip"
-  min_wall: 1.0             # mm — min wall between pouch and mesh surface
-  layout: "circular"        # "circular" | "stacked" | "rings"
+  min_wall: 1.0             # mm - min wall between pouch and mesh surface
+  layout: "rings"        # "circular" | "stacked" | "rings"
 
-  # rings layout — only used when layout: "rings"
+  # rings layout - only used when layout: "rings"
   rings:
     n_rings: 2              # number of rings along the axis
-    ring_spacing: null      # mm between rings; null = auto (60% of axis length / (n_rings-1))
-    ring_rotation_offset: 45.0  # degrees of rotation between successive rings
+    ring_spacing: null      # mm between rings; null = auto (40% of axis length / (n_rings-1))
+    ring_rotation_offset: 90.0  # degrees of rotation between successive rings

@@ -206,8 +206,8 @@ def stacked_layout(object_radius, axis_min, axis_max, magnet_diameter, magnet_th
 
 
 def rings_layout(object_radius, axis_min, axis_max, magnet_diameter, magnet_thickness,
-                 min_wall, n_rings=2, ring_spacing=None, ring_rotation_offset=45.0,
-                 min_clearance=0.5, pouch_wall=1.0, axis="Y", max_magnets=4):
+                 min_wall, n_rings=2, ring_spacing=None, ring_rotation_offset=90.0,
+                 min_clearance=1.5, pouch_wall=1.0, axis="Y", max_magnets=4):
     """
     Multiple circular rings of magnets at evenly-spaced heights along the axis.
     Rings are rotated relative to each other (ring_rotation_offset degrees),
@@ -231,8 +231,8 @@ def rings_layout(object_radius, axis_min, axis_max, magnet_diameter, magnet_thic
         if n_rings == 1:
             ring_spacing = 0.0
         else:
-            # spread rings over 60% of the available axis length
-            ring_spacing = (axis_length * 0.6) / (n_rings - 1)
+            # spread rings over 30% of the available axis length
+            ring_spacing = (axis_length * 0.3) / (n_rings - 1)
 
     total_span = ring_spacing * (n_rings - 1)
     ring_start = axis_center - total_span / 2.0
