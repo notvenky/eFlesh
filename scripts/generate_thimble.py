@@ -224,6 +224,16 @@ def rings_layout(object_radius, axis_min, axis_max, magnet_diameter, magnet_thic
     if n_per_ring == 0:
         return [], {}
 
+    # Place rings equidistant between the center axis and the outer surface.
+    # This keeps magnets well inside the body rather than flush against the skin.
+    equidistant_radius = object_radius / 2.0
+    min_radial = magnet_diameter / 2.0 + pouch_wall + min_wall
+    pouch_diameter = magnet_diameter + 2 * pouch_wall
+    if equidistant_radius >= min_radial:
+        circumferential_spacing = 2 * equidistant_radius * math.sin(math.pi / n_per_ring)
+        if circumferential_spacing > pouch_diameter + min_clearance:
+            layout_radius = equidistant_radius
+
     axis_length = axis_max - axis_min
     axis_center = (axis_min + axis_max) / 2.0
 
