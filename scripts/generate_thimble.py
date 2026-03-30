@@ -413,9 +413,10 @@ def main():
 
     simplify_object(obj, args.input)
 
-    object_radius, bbox = get_object_radius(obj, axis)
+    object_radius, _ = get_object_radius(obj, axis)
     obj.rotation_euler[0] += math.pi
     bpy.ops.object.transform_apply(rotation=True)
+    _, bbox = get_object_radius(obj, axis)  # recompute after flip — Y coords are negated post-transform
 
     center = obj.location
     center_y = center.y
