@@ -399,6 +399,9 @@ def main():
     axis             = args.axis             or sensor_cfg.get("axis", "Y")
     layout           = args.layout           or magnet_cfg.get("layout", "circular")
 
+    stacked_cfg = magnet_cfg.get("stacked", {})
+    stacked_max_count     = stacked_cfg.get("max_count", 3)
+
     rings_cfg = magnet_cfg.get("rings", {})
     n_rings               = args.n_rings               or rings_cfg.get("n_rings", 2)
     ring_spacing          = args.ring_spacing          or rings_cfg.get("ring_spacing", None)
@@ -435,7 +438,7 @@ def main():
             centers = stacked_layout(
                 object_radius, axis_min, axis_max,
                 magnet_diameter, magnet_thickness,
-                min_wall, axis=axis,
+                min_wall, axis=axis, max_count=stacked_max_count,
             )
             print(f"Stacked layout: {len(centers)} magnets")
         elif layout == "rings":

@@ -18,6 +18,10 @@ magnet:
   min_wall: 1.0             # mm - min wall between pouch and mesh surface
   layout: "rings"        # "circular" | "stacked" | "rings"
 
+  # stacked layout - only used when layout: "stacked"
+  stacked:
+    max_count: 2            # maximum number of magnets in the stack
+
   # rings layout - only used when layout: "rings"
   rings:
     n_rings: 2              # number of rings along the axis
