@@ -178,17 +178,11 @@ def circular_layout(radius, count, center, axis="Y"):
 def stacked_layout(object_radius, axis_min, axis_max, magnet_diameter, magnet_thickness,
                    min_wall, min_clearance=1.0, pouch_wall=1.0, axis="Y", max_count=3):
     """Single column of magnets stacked along the axis at maximum radial offset."""
-    radial_offset = object_radius - magnet_diameter / 2.0 - pouch_wall - min_wall
-
-    if radial_offset <= 0:
-        print("Warning: object too small for stacked layout")
-        return []
-
     step = magnet_thickness + min_clearance
     axis_length = axis_max - axis_min
     n = min(max_count, max(1, int(axis_length / step)))
 
-    # Spread n magnets equidistantly across the axis range with margins at both ends
+    # Spread n magnets equidistantly along the central axis with margins at both ends
     if n == 1:
         positions = [(axis_min + axis_max) / 2.0]
     else:
@@ -198,11 +192,11 @@ def stacked_layout(object_radius, axis_min, axis_max, magnet_diameter, magnet_th
     centers = []
     for a in positions:
         if axis == "Y":
-            centers.append([radial_offset, a, 0])
+            centers.append([0, a, 0])
         elif axis == "Z":
-            centers.append([radial_offset, 0, a])
+            centers.append([0, 0, a])
         elif axis == "X":
-            centers.append([0, radial_offset, a])
+            centers.append([a, 0, 0])
 
     return centers
 
