@@ -386,6 +386,7 @@ def main():
     cfg = load_config(args.config) if args.config else {}
     magnet_cfg = cfg.get("magnet", {})
     sensor_cfg = cfg.get("sensor", {})
+    mesh_cfg = cfg.get("mesh", {})
 
     magnet_diameter  = args.magnet_diameter  or magnet_cfg.get("diameter",  9.0)
     magnet_thickness = args.magnet_thickness or magnet_cfg.get("thickness", 3.0)
@@ -504,6 +505,11 @@ def main():
             "min_wall_mm": min_wall,
             "layout": layout if not args.no_pouches else "none",
             **layout_meta,
+        },
+        "mesh": {
+            "E": mesh_cfg.get("E"),
+            "nu": mesh_cfg.get("nu"),
+            "relative_cell_size": mesh_cfg.get("relative_cell_size"),
         },
     }
     manifest_path = str(Path(args.output).with_suffix(".manifest.json"))
