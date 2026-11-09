@@ -177,3 +177,5 @@ cython_debug/
 
 data.json
 temp.json
+# Local reference copies of upstream repos (SO-ARM100, reskin_sensor); not committed
+third_party/
